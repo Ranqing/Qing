@@ -52,7 +52,5 @@ using namespace cv;
 //Eigen
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Eigen>
-
 #define DOUBLE_MAX 1e10
-
 #endif

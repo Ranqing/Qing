@@ -119,7 +119,7 @@ inline void writeOutStringList(const string& fileName, vector<string>& strs, con
     fout.close();
 }
 
-void qing_split_a_string_by_space(const string str, vector<string>& words)
+inline void qing_split_a_string_by_space(const string str, vector<string>& words)
 {
     std::istringstream iss(str);
     do
