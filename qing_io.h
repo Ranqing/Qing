@@ -61,9 +61,32 @@ inline void qing_read_stereo_yml(const string& filename, Mat& R1, Mat& R2, Mat& 
     fs.release();
 }
 
+//stereoFile, R0, R1, P0, P1, Q, imageSize
+inline void qing_read_stereo_yml_qmatrix(const string& filename, Mat& Q)
+{
+    FileStorage fs(filename, FileStorage::READ);
+
+    fs["Q"] >> Q;
+    fs.release();
+}
+
 //(savefn, i, cam0, cam1, imageSize, Point2f(0.f,0.f), Point2f(0.f, 0.f), 240.0f, 0.f, Q);
-inline void qing_write_stereo_info(const string& filename, const int i, const string& cam0, const string& cam1, const Size imageSize,
-                                   const Point2f pt0, const Point2f pt1, const float maxDisp, const float minDisp, const Mat& Qmatrix )
+//stereoname
+//cam0
+//cam1
+//img0
+//img1
+//cropxy0
+//cropxy1
+//cropsz
+//MAXDISP
+//MINDISP
+//Qmatrix
+//filename, camName0, camName1, imgName0, imgName1, cxy[idx0], cxy[idx1], csz[idx0], MAX_DISP, MIN_DISP, Qmatrix
+inline void qing_write_stereo_info(const string& filename, const string& cam0, const string& cam1,
+                                   const string& img0, const string& img1, const Point2f pt0, const Point2f pt1,
+                                   const Size imageSize,
+                                   const float maxDisp, const float minDisp, const Mat& Qmatrix )
 {
     fstream fout(filename.c_str(), ios::out);
     if(fout.is_open() == false)
@@ -72,6 +95,7 @@ inline void qing_write_stereo_info(const string& filename, const int i, const st
         return;
     }
 
+# if 0  // old
     fout << cam0 + cam1 << endl;
     fout << i << endl;
     fout << cam0 << endl;
@@ -93,6 +117,32 @@ inline void qing_write_stereo_info(const string& filename, const int i, const st
         fout << endl;
     }
     fout.close();
+#endif
+
+#if 1
+    fout << cam0 + cam1 << endl;
+    fout << cam0 << endl;
+    fout << cam1 << endl;
+    fout << img0 << endl;
+    fout << img1 << endl;
+    fout << pt0.x << " " << pt0.y << endl;   // left start point
+    fout << pt1.x << " " << pt1.y << endl;   // right start point
+    fout << imageSize.width << " " << imageSize.height << endl;  //image size
+    fout << maxDisp << endl;    //maxdisp
+    fout << minDisp << endl;    //mindisp
+
+    double * ptr = (double *)Qmatrix.ptr(0);
+    for(int r = 0; r < 4; r++)
+    {
+        for(int c = 0; c < 4; c++ )
+        {
+            //fout 格式化输出
+            fout << setprecision(16) << ptr[r*4+c] << ' ';
+        }
+        fout << endl;
+    }
+    fout.close();
+#endif
 }
 
 

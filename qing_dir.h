@@ -5,7 +5,8 @@
 
 inline void qing_create_dir(const string& path)
 {
-    mkdir(path.c_str(),  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    if(NULL==opendir(path.c_str()))
+        mkdir(path.c_str(),  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 }
 
 inline void qing_get_all_files(const string& basePath, vector<string>& files)

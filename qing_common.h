@@ -38,10 +38,10 @@ using namespace std;
 using namespace cv;
 
 //PCL header
-//#include <pcl/io/pcd_io.h>
-//#include <pcl/io/ply_io.h>
-//#include <pcl/point_types.h>
-//#include <pcl/filters/voxel_grid.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/io/ply_io.h>
+#include <pcl/point_types.h>
+#include <pcl/filters/voxel_grid.h>
 
 #define DOUBLE_MAX 1e10
 
