@@ -21,7 +21,8 @@ inline void qing_read_txt(const string& filename, vector<string>& contents)
 #endif
 }
 
-inline void qing_read_xml(const string& filename, vector<string>& contents)
+//read in strings in format xml
+inline void qing_read_strings_xml(const string& filename, vector<string>& contents)
 {
     contents.resize(0);
     FileStorage fs(filename, FileStorage::READ);
@@ -49,6 +50,11 @@ inline void qing_read_intrinsic_yml(const string& filename, Mat& camera_matrix, 
 inline void qing_read_stereo_yml(const string& filename, Mat& R1, Mat& R2, Mat& P1, Mat& P2, Mat& Q, Size& imageSize )
 {
     FileStorage fs(filename, FileStorage::READ);
+    if(false == fs.isOpened())
+    {
+        cerr << "failed to open " << filename << endl;
+        return ;
+    }
 
     fs["Q"] >> Q;
     fs["R1"] >> R1 ;
@@ -61,12 +67,33 @@ inline void qing_read_stereo_yml(const string& filename, Mat& R1, Mat& R2, Mat& 
     fs.release();
 }
 
-//stereoFile, R0, R1, P0, P1, Q, imageSize
+//stereoFile, Q
 inline void qing_read_stereo_yml_qmatrix(const string& filename, Mat& Q)
 {
     FileStorage fs(filename, FileStorage::READ);
+    if(false == fs.isOpened())
+    {
+        cerr << "failed to open " << filename << endl;
+        return ;
+    }
 
     fs["Q"] >> Q;
+    fs.release();
+}
+
+//stereoFile, R, t
+inline void qing_read_stereo_yml_rt(const string& filename, Mat& R, Mat& t)
+{
+    FileStorage fs(filename, FileStorage::READ);
+    if(false == fs.isOpened())
+    {
+        cerr << "failed to open " << filename << endl;
+        return ;
+    }
+
+    fs["Rotation_Matrix"] >> R;
+    fs["Translation_Vector"] >> t;
+
     fs.release();
 }
 
