@@ -96,6 +96,22 @@ inline void qing_write_xyz(const string& filename, vector<Point3f>& points)
     fout.close();
 }
 
+inline void qing_write_xyz(const string &filename, vector<Vec3f> &points)
+{
+    fstream fout (filename.c_str(), ios::out);
+    if(fout.is_open() == false)
+    {
+        cerr << "failed to open " << filename << endl;
+        return ;
+    }
+
+    for(int i = 0; i < points.size(); ++i)
+    {
+        fout << points[i].val[0] << ' ' << points[i].val[1] << ' ' << points[i].val[2] << endl;
+    }
+    fout.close();
+}
+
 inline void qing_write_point_color_ply(const string& plyname, const vector<Vec3f>& points, const vector<Vec3f>& colors)
 {
     fstream fout (plyname.c_str(), ios::out);
