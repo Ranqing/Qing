@@ -46,6 +46,13 @@ inline void qing_get_all_files(const string& basePath, vector<string>& files)
     }
 }
 
+inline void qing_cwd()
+{
+    char cwd[1024];
+    getcwd(cwd, 1024);
+    printf("cwd: %s\n", cwd);
+}
+
 //int getAllTypeFilesInOneFolder(const string& basePath, const string& fileType, vector<string>& files)
 //{
 //    fstream file_list("name.txt", std::ios::out);

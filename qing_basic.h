@@ -9,6 +9,11 @@ inline double qing_euclidean_dis(cv::Point3f pt1, cv::Point3f pt0)
     return sqrt(pt.x * pt.x + pt.y * pt.y + pt.z * pt.z);
 }
 
+inline double qing_norm_vec_3(const double * data)
+{
+    return sqrt(data[0] * data[0] + data[1] * data[1] + data[2] * data[2]);
+}
+
 inline double * qing_calc_cam_center(const double * r, const double * t)
 {
     double * center = new double[3];

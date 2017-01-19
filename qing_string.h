@@ -119,17 +119,6 @@ inline void writeOutStringList(const string& fileName, vector<string>& strs, con
     fout.close();
 }
 
-inline void qing_split_a_string_by_space(const string str, vector<string>& words)
-{
-    std::istringstream iss(str);
-    do
-    {
-        std::string sub;
-        iss >> sub;
-        words.push_back(sub);
-    } while (iss);
-}
-
 inline int string2int(const string& str)
 {
     stringstream ss(str);
@@ -151,6 +140,26 @@ inline string int2FormatString(const int& num, const int& w, const char ch)
     stringstream ss;
     ss << setfill(ch) << setw(w) << num ;
     return ss.str();
+}
+
+inline void qing_split_a_string_by_space(const string str, vector<string>& words)
+{
+    std::istringstream iss(str);
+    do
+    {
+        std::string sub;
+        iss >> sub;
+        words.push_back(sub);
+    } while (iss);
+}
+
+inline bool qing_check_file_suffix(const string fileName, const string suffix)
+{
+    string sstr = fileName.substr(fileName.rfind('.'), fileName.length() - fileName.rfind('.'));
+    if(suffix != sstr)
+        return false;
+    else
+        return true;
 }
 
 #endif // RQ_STRING_H
