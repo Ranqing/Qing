@@ -34,7 +34,9 @@ inline void qing_read_bin(const string filename, float *& data, int total_size) 
     }
 
     fin.read((char *)(data), sizeof(float)*total_size);
+
 # if 0
+    //read in data one-by-one
     for(int i = 0; i < total_size; ++i) {
         fin.read((char *)(data + i), sizeof(float));
     }
