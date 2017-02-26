@@ -16,15 +16,16 @@ inline void qing_write_txt(const string filename, const float* data, const int t
     }
 
     int n_steps = 0;
-    for(int i = 0, step_count = 0; i < total_size; ++i) {
+    for(int i = 0, counter = 0; i < total_size; ++i) {
         fout << data[i] << ' ';
-        step_count ++;
-        if( step_size == step_count ) {
+        counter ++;
+        if(counter == step_size) {
             fout << endl;
-            step_count = 0;
+            counter = 0;
             n_steps ++;
         }
     }
+    fout << endl;
     fout.close();
 
     cout << "end of saving " << filename << ", total_size = " << total_size << ", step_size = " << step_size << ", " << n_steps << " in total.." << endl;
