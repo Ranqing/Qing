@@ -9,7 +9,8 @@ typedef unsigned char uchar;
 inline void qing_median_filter(vector<int>& out, const vector<int>& in, const vector<uchar>& mask, const int h, const int w, const int wnd_size, const int BIN_SIZE) {
 
     int sz = in.size(), offset = wnd_size * 0.5;
-    out.resize(sz, 0.f); copy(in.begin(), in.end(), out.begin());
+    out.resize(sz, 0.f);
+    copy(in.begin(), in.end(), out.begin());
 
     for(int y = 0, idx = 0; y < h; ++y) {
         for(int x = 0; x < w; ++x) {
@@ -29,6 +30,7 @@ inline void qing_median_filter(vector<int>& out, const vector<int>& in, const ve
 
                     int k = in[cur_idx];
 
+                    if(0 > k || histogram.size() <= k) {/*cout << "k=" << k << endl;*/continue;}
                     histogram[k] ++;
                     total++;
                 }
