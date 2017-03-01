@@ -1,0 +1,6 @@
+#ifndef QING_MACROS_H
+#define QING_MACROS_H
+
+#define QING_FILTER_INTENSITY_RANGE 256
+
+#endif // QING_MACROS_H

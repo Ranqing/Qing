@@ -33,9 +33,9 @@ T ** qing_clear_2d_array(T ** ptr, int size1, int size2) {
 template <typename T>
 T *** qing_new_3d_array(T *** ptr, int size1, int size2, int size3) {
     ptr = new T**[size1];
-    for (i = 0; i < size1; i ++) {
+    for (int i = 0; i < size1; i ++) {
         ptr[i] = new T*[size2];
-        for (j = 0; j < size2; j ++)  ptr[i][j] = new T[size3];
+        for (int j = 0; j < size2; j ++)  ptr[i][j] = new T[size3];
     }
     return ptr;
 }
@@ -43,8 +43,8 @@ T *** qing_new_3d_array(T *** ptr, int size1, int size2, int size3) {
 template <typename T>
 T *** qing_clear_3d_array(T *** ptr, int size1, int size2, int size3) {
     if(NULL != ptr) {
-        for (i = 0; i < size1; i ++) {
-            for (j = 0; j < size2; j ++) delete[] ptr[i][j];
+        for (int i = 0; i < size1; i ++) {
+            for (int j = 0; j < size2; j ++) delete[] ptr[i][j];
             delete[] ptr[i];
         }
         delete[] ptr;
