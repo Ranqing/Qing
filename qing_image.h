@@ -26,6 +26,16 @@ inline bool qing_vec_2_img(const vector<T>& pixels, Mat& img) {
     return true;
 }
 
+inline Mat qing_uchar_array_2_image(unsigned char * colors, const int h, const int w, const int ch)
+{
+    Mat image;
+    if(1==ch) image.create(h, w, CV_8UC1);
+    else if(3==ch) image.create(h,w,CV_8UC3);
+
+    memcpy(image.data, colors, h*w*ch);
+    return image;
+}
+
 inline bool qing_float_vec_2_uchar_img(const vector<float>& pixels, const int scale, Mat& img) {
     if(NULL == img.data) {
         cerr << "invalid memory of img...alloc memory first.." << endl;

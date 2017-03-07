@@ -38,10 +38,52 @@ inline float * qing_get_spatial_weighted_table(float sigma_spatial, int len) {
     return table_spatial;
 }
 
+inline float * qing_get_directions(float step, int len) {
+
+    float * table_direction, * direction_table_x;
+    table_direction = new float[len];
+    direction_table_x = &table_direction[0];
+
+    int offset = len * 0.5;
+    for(int i = -offset; i <= offset; ++i) {
+        *direction_table_x++ =  i * step;
+    }
+    return table_direction;
+
+
+//    int len_wy = 21, offset_wy = len_wy * 0.5;
+//    double wy_step = 0.5;
+//    double * y_directions = new double[len_wy];
+//    for(int i = -offset_wy, cnt = 0; i <= offset_wy; ++i, ++cnt) {
+//        y_directions[cnt] = i * wy_step;
+//    }
+
+}
+
+//implementation of directional bilateral filter
+//inline float * qing_get_directional_spatial_weighted_table(float sigma_spatial, float cita, int len) {
+//    float * table_spatial, * spatial_table_x;
+//    float cos_cita = cos(cita * QING_PI / 180.0 );
+//    table_spatial = new float[len];
+//    spatial_table_x = &table_spatial[0];
+//    for(int y = 0; y < len; ++y) {
+//        *spatial_table_x++ = exp(-double(y*cos_cita*y*cos_cita)/(2*sigma_spatial*sigma_spatial));
+//    }
+//#if 0
+//    cout << "sigma_spatial = " << sigma_spatial << endl;
+//    cout << len << endl;
+//    for(int y = 0; y < len; ++y) {
+//        cout << table_spatial[y] << ' ';
+//    }
+//    cout << endl;
+//#endif
+//    return table_spatial;
+//}
+
 //approximated_bilteral_filter
 inline void qing_approximated_bilateral_filter(float * out, float * in, unsigned char * bgr, const int w, const int h, double sigma_range, double sigma_spatial) {
 
-    cout << "qing_approximated_bilateral_filter..." << endl;
+    //   cout << "qing_approximated_bilateral_filter..." << endl;
     float * range_table = qing_get_range_weighted_table(sigma_range, QING_FILTER_INTENSITY_RANGE);
     float * spatial_table = qing_get_spatial_weighted_table(sigma_spatial, 2*(int)(sigma_spatial+0.5f)+1);
 
@@ -121,7 +163,7 @@ inline void qing_approximated_bilateral_filter(float * out, float * in, unsigned
 
 //brute_force
 inline void qing_bilateral_filter(float * out, float * in, unsigned char * bgr, const int w, const int h, double sigma_range, double sigma_spatial) {
-    cout << "qing_bilateral_filter..." << endl;
+    //  cout << "qing_bilateral_filter..." << endl;
 
     int wnd = 2*(int)(sigma_spatial+0.5f)+1;
     int offset = wnd * 0.5;
@@ -165,9 +207,19 @@ inline void qing_bilateral_filter(float * out, float * in, unsigned char * bgr, 
     }
 }
 
-//bilateral_filter_one_channel, by vector
+//TO-DO
+//save minimum in x-direction, then the minumum in y-direction
+//and then minimum in y-direction
+//x_dir: direction params in x-direction
+//y_dir: direction params in y-direction
+//inline void qing_approximate_directional_bilateral_filter(float * out, float * in, unsigned char * bgr, const int w, const int h,  float x_dir, float y_dir, double sigma_range, double sigma_spatial)
+//{
+
+//}
+
+//brute force of bilateral_filter_one_channel, by vector
 inline void qing_bilateral_filter_1ch(const vector<float>& img, const vector<uchar>& msk, const int w, const int h, vector<float>& cost_vol,
-                      const int wnd = 9,  double sigma_spatial = 4.5, double sigma_range = 0.03 ) {
+                                      const int wnd = 9,  double sigma_spatial = 4.5, double sigma_range = 0.03 ) {
     sigma_spatial = wnd * 0.5;
     int offset = (int)(sigma_range);
 

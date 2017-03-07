@@ -4,7 +4,9 @@
 #include "qing_common.h"
 #include "qing_string.h"
 
-#define QING_TAD_TRUNCATED 40
+#define QING_TAD_TRUNCATED      40
+#define QING_MAX_MCOST          10000.f
+#define QING_MIN_MCOST          -QING_MAX_MCOST
 
 inline unsigned char qing_get_mcost_tad(unsigned char * color_0, unsigned char * color_1, int n = 3) {
 
