@@ -9,6 +9,11 @@
 #include <fstream>
 using namespace std;
 
+#include <opencv2/core/core.hpp>
+#include <opencv2/calib3d/calib3d.hpp>
+#include <opencv2/highgui/highgui.hpp>
+using namespace cv;
+
 //data's memory should be alloc first
 inline void qing_read_bin_c(const string filename, float *& data, int total_size) {
     FILE * fin_in = fopen(filename.c_str(),  "rb");
@@ -27,7 +32,7 @@ inline void qing_read_bin_c(const string filename, float *& data, int total_size
 }
 
 inline void qing_read_bin(const string filename, float *& data, int total_size) {
-    ifstream fin(filename, ios::in|ios::binary);
+    ifstream fin(filename.c_str(), ios::in|ios::binary);
     if(false == fin.is_open()) {
         cerr << "error to open " << filename << endl;
         return ;
@@ -42,6 +47,27 @@ inline void qing_read_bin(const string filename, float *& data, int total_size) 
     }
 # endif
 }
+
+inline Mat qing_read_disp_txt(const string disp_file, Size disp_size) {
+    Mat disp_mat = Mat::zeros(disp_size, CV_32FC1);
+    int disp_h = disp_size.width;
+    int disp_w = disp_size.height;
+    fstream fin(disp_file.c_str(), ios::in);
+    if(fin.is_open() == false) {
+        cerr << "failed to open " << disp_file << endl;
+        exit(1);
+    }
+
+    float * ptr = disp_mat.ptr<float>(0);
+    for(int y = 0, idx = 0; y < disp_h; ++y) {
+        for(int x = 0; x < disp_w; ++x) {
+            fin >> ptr[idx++];
+        }
+    }
+    cout << "finish reading " << disp_file << endl;
+    return disp_mat;
+}
+
 
 #endif // QING_FILE_READER
 

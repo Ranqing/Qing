@@ -2,6 +2,7 @@
 #define QING_BILATERAL_FILTER_H
 
 #include "qing_macros.h"
+#include "qing_matching_cost.h"
 
 inline float * qing_get_range_weighted_table(float sigma_range, int len) {
     float * table_range, * range_table_x;
@@ -12,6 +13,7 @@ inline float * qing_get_range_weighted_table(float sigma_range, int len) {
     }
 #if 0
     cout << "sigma_range = " << sigma_range << endl;
+    cout << "len = " << len << endl;
     for(int y = 0; y < len; ++y) {
         cout << table_range[y] << ' ';
     }
@@ -49,46 +51,13 @@ inline float * qing_get_directions(float step, int len) {
         *direction_table_x++ =  i * step;
     }
     return table_direction;
-
-
-//    int len_wy = 21, offset_wy = len_wy * 0.5;
-//    double wy_step = 0.5;
-//    double * y_directions = new double[len_wy];
-//    for(int i = -offset_wy, cnt = 0; i <= offset_wy; ++i, ++cnt) {
-//        y_directions[cnt] = i * wy_step;
-//    }
-
 }
 
-//implementation of directional bilateral filter
-//inline float * qing_get_directional_spatial_weighted_table(float sigma_spatial, float cita, int len) {
-//    float * table_spatial, * spatial_table_x;
-//    float cos_cita = cos(cita * QING_PI / 180.0 );
-//    table_spatial = new float[len];
-//    spatial_table_x = &table_spatial[0];
-//    for(int y = 0; y < len; ++y) {
-//        *spatial_table_x++ = exp(-double(y*cos_cita*y*cos_cita)/(2*sigma_spatial*sigma_spatial));
-//    }
-//#if 0
-//    cout << "sigma_spatial = " << sigma_spatial << endl;
-//    cout << len << endl;
-//    for(int y = 0; y < len; ++y) {
-//        cout << table_spatial[y] << ' ';
-//    }
-//    cout << endl;
-//#endif
-//    return table_spatial;
-//}
-
-//approximated_bilteral_filter
-inline void qing_approximated_bilateral_filter(float * out, float * in, unsigned char * bgr, const int w, const int h, double sigma_range, double sigma_spatial) {
-
-    //   cout << "qing_approximated_bilateral_filter..." << endl;
-    float * range_table = qing_get_range_weighted_table(sigma_range, QING_FILTER_INTENSITY_RANGE);
-    float * spatial_table = qing_get_spatial_weighted_table(sigma_spatial, 2*(int)(sigma_spatial+0.5f)+1);
+inline void qing_approximated_bilateral_filter(float * out, float * in, unsigned char *  bgr, const int w, const int h, const int wnd, float * range_table, float * spatial_table)
+{
+   // cout << "qing_approximated_bilateral_filter..." << endl;
 
     int image_size = h * w;
-    int wnd = 2*(int)(sigma_spatial+0.5f)+1;
     int offset = wnd * 0.5;
 
     float * temp = new float[image_size];
@@ -98,6 +67,7 @@ inline void qing_approximated_bilateral_filter(float * out, float * in, unsigned
     for(int y = 0; y < h; ++y) {
         int idy = y * w;
         for(int x = 0; x < w; ++x) {
+
             int idx = idy + x;
             double sum = 0.0, sum_div = 0.0;
 
@@ -116,7 +86,100 @@ inline void qing_approximated_bilateral_filter(float * out, float * in, unsigned
                 int delta_g = abs(g_c - *(++p_bgr_k));
                 int delta_r = abs(r_c - *(++p_bgr_k));
 
-                double weight = range_table[delta_b] * range_table[delta_g] * range_table[delta_r] * spatial_table[abs(k)] ;
+                //    double weight = range_table[delta_b] * range_table[delta_g] * range_table[delta_r] * spatial_table[abs(k)];
+                int delta_bgr = 0.333333 * (delta_b + delta_g + delta_r);
+                double weight = range_table[delta_bgr] * spatial_table[abs(k)];
+                sum_div += weight;
+                sum += weight * in_[idk];
+            }
+            out_[idx] = sum / sum_div;
+        }
+    }
+//    cout << "horizontal filtering done.." << endl;
+
+    //vertical filtering
+    in_ = temp;
+    out_ = out;
+    for(int y = 0; y < h; ++y) {
+        int idy = y * w;
+        for(int x = 0; x < w; ++x) {
+
+            int idx = idy + x;
+            double sum = 0.0, sum_div = 0.0;
+
+            unsigned char * p_bgr_c = bgr + 3 * idx - 1;
+            unsigned char b_c = *(++p_bgr_c);
+            unsigned char g_c = *(++p_bgr_c);
+            unsigned char r_c = *(++p_bgr_c);
+
+            for(int k = -offset; k <= offset; ++k) {
+                if(k+y < 0 || k+y >= h) continue;
+
+                int idk = idx + k*w;
+
+                unsigned char * p_bgr_k = bgr + 3 * idk - 1;
+                int delta_b = abs(b_c - *(++p_bgr_k));
+                int delta_g = abs(g_c - *(++p_bgr_k));
+                int delta_r = abs(r_c - *(++p_bgr_k));
+
+                //  double weight = range_table[delta_b] * range_table[delta_g] * range_table[delta_r] * spatial_table[abs(k)] ;
+
+                int delta_bgr = 0.333333 * (delta_b + delta_g + delta_r);
+                double weight = range_table[delta_bgr] * spatial_table[abs(k)];
+                sum_div += weight;
+                sum += weight * in_[idk];
+            }
+            out_[idx] = sum / sum_div;
+        }
+    }
+//    cout << "vertical filtering done.." << endl;
+}
+
+
+//old
+inline void qing_approximated_bilateral_filter(float * out, float * in, unsigned char * bgr, const int w, const int h, double sigma_range, double sigma_spatial) {
+
+    cout << "qing_approximated_bilateral_filter..." << endl;
+
+    float * range_table = qing_get_range_weighted_table((int)sigma_range, QING_FILTER_INTENSITY_RANGE);
+    float * spatial_table = qing_get_spatial_weighted_table(sigma_spatial, 50); //2*(int)(sigma_spatial+0.5f)+1);
+
+    int image_size = h * w;
+    int wnd = 2*(int)(sigma_spatial+0.5f)+1;
+    int offset = wnd * 0.5;
+
+    float * temp = new float[image_size];
+    float * in_ = in;                       /*horizontal filtering*/
+    float * out_ = temp;
+
+    for(int y = 0; y < h; ++y) {
+        int idy = y * w;
+        for(int x = 0; x < w; ++x) {
+
+            int idx = idy + x;
+            double sum = 0.0, sum_div = 0.0;
+
+            unsigned char * p_bgr_c = bgr + 3 * idx - 1;
+            unsigned char b_c = *(++p_bgr_c);
+            unsigned char g_c = *(++p_bgr_c);
+            unsigned char r_c = *(++p_bgr_c);
+
+            for(int k = -offset; k <= offset; ++k) {
+                if(k+x < 0 || k+x >= w) continue;
+
+                int idk = idx + k;
+
+                unsigned char * p_bgr_k =  bgr + 3 * idk - 1;
+                int delta_b = abs(b_c - *(++p_bgr_k));
+                int delta_g = abs(g_c - *(++p_bgr_k));
+                int delta_r = abs(r_c - *(++p_bgr_k));
+
+                //    double weight = range_table[delta_b] * range_table[delta_g] * range_table[delta_r] * spatial_table[abs(k)];
+
+
+                int delta_bgr = 0.333333 * (delta_b + delta_g + delta_r);
+                double weight = range_table[delta_bgr] * spatial_table[abs(k)];
+
 
                 sum_div += weight;
                 sum += weight * in_[idk];
@@ -125,7 +188,7 @@ inline void qing_approximated_bilateral_filter(float * out, float * in, unsigned
             out_[idx] = sum / sum_div;
         }
     }
-    cout << QING_DEBUG_FLAG_STRING << "\t horizontal filtering done.." << endl;
+    cout << "horizontal filtering done.." << endl;
 
     //vertical filtering
     in_ = temp;
@@ -133,6 +196,7 @@ inline void qing_approximated_bilateral_filter(float * out, float * in, unsigned
     for(int y = 0; y < h; ++y) {
         int idy = y * w;
         for(int x = 0; x < w; ++x) {
+
             int idx = idy + x;
             double sum = 0.0, sum_div = 0.0;
 
@@ -150,7 +214,11 @@ inline void qing_approximated_bilateral_filter(float * out, float * in, unsigned
                 int delta_g = abs(g_c - *(++p_bgr_k));
                 int delta_r = abs(r_c - *(++p_bgr_k));
 
-                double weight = range_table[delta_b] * range_table[delta_g] * range_table[delta_r] * spatial_table[abs(k)] ;
+                //  double weight = range_table[delta_b] * range_table[delta_g] * range_table[delta_r] * spatial_table[abs(k)] ;
+
+                int delta_bgr = 0.333333 * (delta_b + delta_g + delta_r);
+                double weight = range_table[delta_bgr] * spatial_table[abs(k)];
+
 
                 sum_div += weight;
                 sum += weight * in_[idk];
@@ -159,6 +227,7 @@ inline void qing_approximated_bilateral_filter(float * out, float * in, unsigned
             out_[idx] = sum / sum_div;
         }
     }
+    cout << "vertical filtering done.." << endl;
 }
 
 //brute_force
@@ -196,7 +265,10 @@ inline void qing_bilateral_filter(float * out, float * in, unsigned char * bgr, 
                     int delta_g = abs(g_c - *(++p_bgr_k));
                     int delta_r = abs(r_c - *(++p_bgr_k));
 
-                    double weight = range_table[delta_b] * range_table[delta_g] * range_table[delta_r] * spatial_table[abs(i)] * spatial_table[abs(j)] ;
+                    //                    double weight = range_table[delta_b] * range_table[delta_g] * range_table[delta_r] * spatial_table[abs(i)] * spatial_table[abs(j)] ;
+
+                    int delta_bgr = 0.333333 * (delta_b + delta_g + delta_r);
+                    double weight = range_table[delta_bgr] * spatial_table[abs(i)] * spatial_table[abs(j)] ;
 
                     sum_div += weight;
                     sum += weight * in_[idk];
