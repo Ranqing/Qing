@@ -77,9 +77,13 @@ inline void qing_approximated_bilateral_filter(float * out, float * in, unsigned
             unsigned char r_c = *(++p_bgr_c);
 
             for(int k = -offset; k <= offset; ++k) {
-                if(k+x < 0 || k+x >= w) continue;
+                int xk = k+x;
+                xk = max(0,  xk);
+                xk = min(w-1,xk);
+                //if(k+x < 0 || k+x >= w) continue;
+                //int idk = idx+k;
 
-                int idk = idx + k;
+                int idk = idy + xk;
 
                 unsigned char * p_bgr_k =  bgr + 3 * idk - 1;
                 int delta_b = abs(b_c - *(++p_bgr_k));
@@ -113,9 +117,12 @@ inline void qing_approximated_bilateral_filter(float * out, float * in, unsigned
             unsigned char r_c = *(++p_bgr_c);
 
             for(int k = -offset; k <= offset; ++k) {
-                if(k+y < 0 || k+y >= h) continue;
-
-                int idk = idx + k*w;
+                int yk = k+y;
+                yk = max(0,  yk);
+                yk = min(h-1,yk);
+                //if(k+y < 0 || k+y >= h) continue;
+                //int idk = idx + k*w;
+                int idk = yk * w + x;
 
                 unsigned char * p_bgr_k = bgr + 3 * idk - 1;
                 int delta_b = abs(b_c - *(++p_bgr_k));

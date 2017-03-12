@@ -18,7 +18,36 @@ inline unsigned char qing_get_mcost_tad(unsigned char * color_0, unsigned char *
     return (unsigned char)min((int)delta, QING_TAD_TRUNCATED);
 }
 
+//census from qx
+inline unsigned char qx_census_transform_3x3_sub(unsigned char * in, int w) {
+    unsigned char census = (*(in-w-1) > *in);
+    census+=((*(in-w)>*in)<<1);
+    census+=((*(in-w+1)>*in)<<2);
+    census+=((*(in-1)>*in)<<3);
+    census+=((*(in+1)>*in)<<4);
+    census+=((*(in+w-1)>*in)<<5);
+    census+=((*(in+w)>*in)<<6);
+    census+=((*(in+w+1)>*in)<<7);
+    return(census);
+}
 
+inline unsigned char qx_hamming_distance(unsigned char x, unsigned char y) {
+    unsigned char dist=0, val=x^y;
+    while(val){
+        dist++;
+        val&=val-1;
+    }
+    return dist;
+}
+inline void qx_census_transform_3x3(unsigned char * out, unsigned char * in, int h, int w) {
+    memset(out, 0, sizeof(unsigned char)*h*w);
+    for(int y = 1; y < h-1; ++y) {
+        for(int x = 1; x < w-1; ++x) {
+            int idx = y*w+x;
+            out[idx] = qx_census_transform_3x3_sub(&(in[idx]), w);
+        }
+    }
+}
 
 //debug
 inline void qing_save_mcost_txt(const string filename, float * mcost, int total_size, int step) {
@@ -78,6 +107,26 @@ inline Mat qing_save_mcost_jpg_inf(const string filename, float * mcost, int w, 
     imwrite(filename, vis_mcost_mat);
     cout << "saving " << filename << endl;
     return vis_mcost_mat;
+}
+
+inline void  qing_wta_disparity(unsigned char * disp, float * cost_vol, int disp_range, int h,  int w, int scale = 1) {
+
+    int image_size = h * w;
+    for(int y = 0, idx = 0; y < h; ++y) {
+        for(int x = 0; x < w; ++x) {
+            float min_mcost = QING_MAX_MCOST;
+            int min_d = 0;
+            for(int d = 1; d < disp_range; ++d) {
+                float mcost = *(cost_vol + d * image_size + idx);
+                if(mcost < min_mcost) {
+                    min_mcost = mcost;
+                    min_d = d * scale;
+                }
+            }
+            disp[idx] = min_d;
+            idx++;
+        }
+    }
 }
 
 #endif // QING_MATCHING_COST_H
