@@ -48,6 +48,20 @@ inline void qing_read_bin(const string filename, float *& data, int total_size) 
 # endif
 }
 
+inline void qing_read_txt(const string filename, float *& data, int total_size) {
+    fstream fin(filename.c_str(), ios::in);
+    if(false == fin.is_open()) {
+        cerr << "error to open "  << filename << endl;
+        return ;
+    }
+
+    for(int i = 0; i < total_size; ++i) {
+        fin >> data[i];
+    }
+    fin.close();
+    cout << "reading " << filename << " done." << endl;
+}
+
 inline Mat qing_read_disp_txt(const string disp_file, Size disp_size) {
     Mat disp_mat = Mat::zeros(disp_size, CV_32FC1);
     int disp_h = disp_size.width;
