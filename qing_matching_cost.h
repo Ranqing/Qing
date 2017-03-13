@@ -4,6 +4,7 @@
 #include "qing_common.h"
 #include "qing_string.h"
 #include "qing_timer.h"
+#include "qing_bilateral_filter.h"
 
 #define QING_TAD_TRUNCATED      100
 #define QING_MAX_MCOST          10000.f
@@ -70,11 +71,29 @@ inline void qx_census_transform_3x3(unsigned char * out, unsigned char * in, int
     }
 }
 
+//aggregate mcost volume with approximate bilateral filter guided by gray image
+inline void qing_bf_mcost_aggregation(float * filtered_mcost_vol, float * mcost_vol, unsigned char *gray, int w, int h, int d_range, int wnd, float * range_table, float *spatial_table) {
 
-//matching cost aggregation
+    int image_size = h * w;
+    int total_size = d_range * image_size;
+    memcpy(filtered_mcost_vol, mcost_vol, sizeof(float)*total_size);
+
+    QingTimer timer;
+    for(int d = 0; d < d_range; ++d) {
+        float * out = filtered_mcost_vol + d * image_size; timer.restart();
+        qing_approximated_gray_bilateral_filter(out, out, gray, w, h, wnd, range_table, spatial_table);
+        cout << "d = " << d << "\t duration = " << timer.duration()*1000 << " ms." << endl;
+# if 0
+        string out_file = "directional_matching_cost/bf_filtered_mcost_" + qing_int_2_string(d) + ".jpg";
+        qing_save_mcost_jpg(out_file, out, m_w, m_h);
+# endif
+    }
+}
+
 //mcost_vol: pixel-level matching cost
 //filtered_mcost_vol: filtering matching cost
 //len: num of directions
+//directional aggregate mcost volume with approximated bilateral filter guided by gray image
 inline void qing_directional_bf_mcost_aggregation(float * filtered_mcost_vol, float * mcost_vol, float * min_mcost_x, unsigned char * gray, int w, int h, int d_range, int wnd, float * range_table, float * spatial_table, float * directions, int len) {
 
     double * weights = new double[wnd];       //for each direciton, the weights can be pre-computed
@@ -270,6 +289,27 @@ inline Mat qing_save_mcost_jpg_inf(const string filename, float * mcost, int w, 
     imwrite(filename, vis_mcost_mat);
     cout << "saving " << filename << endl;
     return vis_mcost_mat;
+}
+
+inline void qing_save_mcost_vol(const string filename, float * cost_vol, int m_d, int m_h, int m_w) {
+    fstream fout(filename.c_str(), ios::out);
+    if(fout.is_open() == false) {
+        cerr << "failed to open " << filename << endl;
+        return ;
+    }
+    cout << "saving " << filename << endl;
+    int m_image_size = m_h * m_w;
+    for(int d = 0; d < m_d; ++d) {
+        float * mcost = cost_vol + d * m_image_size;
+        for(int y = 0, idx = 0; y < m_h; ++y) {
+            for(int x = 0; x < m_w; ++x) {
+                fout << mcost[idx++] << ' ';
+            }
+            fout << endl;
+        }
+        cout << d << ' ';
+    }
+    cout << endl;    fout.close();
 }
 
 #endif // QING_MATCHING_COST_H
