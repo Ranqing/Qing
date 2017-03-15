@@ -100,6 +100,36 @@ inline Mat qing_erode_image(const Mat& image, const int wsize ) {
     return result;
 }
 
+//shift image
+//new_x = x + x_offset
+//new_y = y + y_offset
+//y_offset > 0 shift up
+//y_offset < 0 shift down
+inline void qing_shift_image(Mat& out_image, Mat& image, int x_offset, int y_offset) {
+    int h = image.size().height;
+    int w = image.size().width;
+
+    if(y_offset > 0) {
+        int crop_x = 0 + x_offset; crop_x = min( max(0, crop_x), w-1);
+        int crop_y = 0 + y_offset; crop_y = min( max(0, crop_y), h-1);
+        int crop_h = h - y_offset; crop_h = min( max(0, crop_h), h);
+        int crop_w = w - x_offset; crop_w = min( max(0, crop_w), w);
+
+       // cout << crop_x << '\t' << crop_y << '\t' << crop_w << '\t' << crop_h << endl;
+        image(Rect(crop_x, crop_y, crop_w, crop_h)).copyTo(out_image(Rect(0,0,crop_w,crop_h)));
+    }
+    else if(y_offset < 0) {
+        int crop_x = 0;
+        int crop_y = 0;
+        int crop_h = h + y_offset;
+        int crop_w = w + x_offset;
+
+       // cout << crop_x << '\t' << crop_y << '\t' << crop_w << '\t' << crop_h << endl;
+        image(Rect(crop_x, crop_y, crop_w, crop_h)).copyTo(out_image(Rect(abs(x_offset), abs(y_offset), crop_w, crop_h)));
+    }
+
+}
+
 
 //Get mask value of (fx, fy) in mask
 //DEPTH: depth of mask

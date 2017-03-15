@@ -82,6 +82,50 @@ inline Mat qing_read_disp_txt(const string disp_file, Size disp_size) {
     return disp_mat;
 }
 
+inline void qing_read_disp_txt(const string disp_file, const int h, const int w, vector<float>& disp) {
+    int total_size = h*w;
+    disp.resize(total_size);
+    fstream fin(disp_file.c_str(), ios::in);
+    if(fin.is_open() == false) {
+        cerr << "failed to open " << disp_file << endl;
+        exit(1);
+    }
+    for(int idx = 0; idx < total_size; ++idx ) {
+        fin >> disp[idx];
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #endif // QING_FILE_READER
 

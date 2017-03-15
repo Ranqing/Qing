@@ -40,6 +40,22 @@ inline unsigned char qing_get_mcost_tad(unsigned char * color_0, unsigned char *
     return (unsigned char)min((int)delta, QING_TAD_TRUNCATED);
 }
 
+//NCC
+inline float qing_calc_ncc_value(const vector<float>& ncc_vec_l, const vector<float>& ncc_vec_r) {
+    if(0==ncc_vec_l.size() || 0==ncc_vec_r.size() || ncc_vec_l.size() != ncc_vec_r.size() ) return 0.f;
+    double fenzi = 0.0, fenmu1 = 0.0, fenmu2 = 0.0, fenmu = 0.0;
+    for(int i = 0; i < ncc_vec_l.size(); ++i) {
+        fenzi += ncc_vec_l[i] * ncc_vec_r[i];
+        fenmu1 += ncc_vec_l[i] * ncc_vec_l[i];
+        fenmu2 += ncc_vec_r[i] * ncc_vec_r[i];
+    }
+
+    fenmu = sqrt(fenmu1) * sqrt(fenmu2);
+    if(fenmu == 0.0) return 0.1;
+    else
+        return fenzi/fenmu;
+}
+
 //census from qx
 inline unsigned char qx_census_transform_3x3_sub(unsigned char * in, int w) {
     unsigned char census = (*(in-w-1) > *in);
@@ -108,6 +124,11 @@ inline void qing_directional_bf_mcost_aggregation(float * filtered_mcost_vol, fl
     //x-direction filtering
     cout << "horizontal filtering start.." << endl;
 
+    //different window size
+    wnd = 31;
+    offset = wnd * 0.5;
+    cout << "wnd size = " << wnd << endl;
+
     for(int d = 0; d < d_range; ++d) {
         float * out = min_mcost_x + d * image_size;
         cout << "d = " << d ; timer.restart();
@@ -169,6 +190,9 @@ inline void qing_directional_bf_mcost_aggregation(float * filtered_mcost_vol, fl
 
     //y-direction filtering
     cout << "vertical filtering start..." << endl;
+    wnd = 11;
+    offset = wnd * 0.5;
+    cout << "wnd size = " << wnd << endl;
     for(int d = 0; d < d_range; ++d) {
         float * out = filtered_mcost_vol + d * image_size;
         cout << "d = " << d ; timer.restart();
@@ -228,6 +252,22 @@ inline void qing_directional_bf_mcost_aggregation(float * filtered_mcost_vol, fl
    file = "../disp_in_y.png";
    imwrite(file, y_disp_mat); cout << "saving " << file << endl;
 # endif
+}
+
+//using two images as guidance
+inline void qing_directional_bf_mcost_aggregation(float *filtered_mcost_vol, float * mcost_vol, float *min_mcost_x, unsigned char *gray_l, unsigned char * gray_r, int w, int h, int d_range, int wnd, float *range_table, float *spatial_table, float *directions, int len) {
+
+    double * weights = new double[wnd];       //for each direciton, the weights can be pre-computed
+    double sum, sum_div, x_dir, y_dir;
+    unsigned char gray_c;
+    int idy, idx, idk, delta_pq, k_d;
+    int image_size = h * w;
+    int offset = wnd * 0.5;
+
+
+
+
+
 }
 
 

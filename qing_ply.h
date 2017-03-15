@@ -115,6 +115,10 @@ inline void qing_write_xyz(const string &filename, vector<Vec3f> &points)
 inline void qing_write_point_color_ply(const string& plyname, const vector<Vec3f>& points, const vector<Vec3f>& colors)
 {
     fstream fout (plyname.c_str(), ios::out);
+    if(fout.is_open() == false) {
+        cerr << "failed to open " << plyname << endl;
+        return ;
+    }
     fout << "ply" << endl;
     fout << "format ascii 1.0"     << endl;
     fout << "element vertex "      << points.size() << endl;
