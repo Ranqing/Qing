@@ -101,34 +101,80 @@ inline Mat qing_erode_image(const Mat& image, const int wsize ) {
 }
 
 //shift image
-//new_x = x + x_offset
-//new_y = y + y_offset
-//y_offset > 0 shift up
-//y_offset < 0 shift down
-inline void qing_shift_image(Mat& out_image, Mat& image, int x_offset, int y_offset) {
+//x' = x + x_offset
+//y' = y + y_offset
+//y_offset > 0 shift down
+//y_offset < 0 shift up
+//inline void qing_shift_image(Mat& out_image, Mat& image, int y_offset, int x_offset = 0) {
+//    int h = image.size().height;
+//    int w = image.size().width;
+//    out_image = Mat::zeros(h,w,image.type());
+
+////    if(y_offset > 0) {
+////        int crop_x = 0 + x_offset; crop_x = min( max(0, crop_x), w-1);
+////        int crop_y = 0 + y_offset; crop_y = min( max(0, crop_y), h-1);
+////        int crop_h = h - y_offset; crop_h = min( max(0, crop_h), h);
+////        int crop_w = w - x_offset; crop_w = min( max(0, crop_w), w);
+
+////       // cout << crop_x << '\t' << crop_y << '\t' << crop_w << '\t' << crop_h << endl;
+////        image(Rect(crop_x, crop_y, crop_w, crop_h)).copyTo(out_image(Rect(0,0,crop_w,crop_h)));
+////    }
+////    else if(y_offset < 0) {
+////        int crop_x = 0;
+////        int crop_y = 0;
+////        int crop_h = h + y_offset;
+////        int crop_w = w + x_offset;
+
+////       // cout << crop_x << '\t' << crop_y << '\t' << crop_w << '\t' << crop_h << endl;
+////        image(Rect(crop_x, crop_y, crop_w, crop_h)).copyTo(out_image(Rect(abs(x_offset), abs(y_offset), crop_w, crop_h)));
+////    }
+
+//    if(y_offset > 0) { //down
+//        int crop_h = h - y_offset;
+//        int crop_w = w - x_offset;
+//        int crop_x = 0;
+//        int crop_y = 0;
+
+//        cout << "shift image down in y\t" << y_offset  << '\t' << crop_h << " x " << crop_w << endl;
+//        image(Rect(crop_x, crop_y, crop_w, crop_h)).copyTo(out_image(Rect(x_offset, y_offset, crop_w, crop_h)));
+//    }
+//    else if(y_offset < 0) {
+//        int crop_h = h + y_offset;
+//        int crop_w = w - x_offset;
+//        int crop_x = abs(x_offset);
+//        int crop_y = abs(y_offset);
+
+//        cout << "shift image up in y\t" << y_offset << '\t' << crop_h << " x " << crop_w << endl;
+//        image(Rect(crop_x, crop_y, crop_w, crop_h)).copyTo(out_image(Rect(0,0,crop_w, crop_h)));
+//    }
+//}
+
+inline Mat qing_shift_image(Mat& image, int y_offset, int x_offset = 0) {
     int h = image.size().height;
     int w = image.size().width;
+    Mat out_image = Mat::zeros(h,w,image.type());
 
-    if(y_offset > 0) {
-        int crop_x = 0 + x_offset; crop_x = min( max(0, crop_x), w-1);
-        int crop_y = 0 + y_offset; crop_y = min( max(0, crop_y), h-1);
-        int crop_h = h - y_offset; crop_h = min( max(0, crop_h), h);
-        int crop_w = w - x_offset; crop_w = min( max(0, crop_w), w);
-
-       // cout << crop_x << '\t' << crop_y << '\t' << crop_w << '\t' << crop_h << endl;
-        image(Rect(crop_x, crop_y, crop_w, crop_h)).copyTo(out_image(Rect(0,0,crop_w,crop_h)));
-    }
-    else if(y_offset < 0) {
+    if(y_offset > 0) { //down
+        int crop_h = h - y_offset;
+        int crop_w = w - x_offset;
         int crop_x = 0;
         int crop_y = 0;
-        int crop_h = h + y_offset;
-        int crop_w = w + x_offset;
 
-       // cout << crop_x << '\t' << crop_y << '\t' << crop_w << '\t' << crop_h << endl;
-        image(Rect(crop_x, crop_y, crop_w, crop_h)).copyTo(out_image(Rect(abs(x_offset), abs(y_offset), crop_w, crop_h)));
+        cout << "shift image down in y\t" << y_offset  << '\t' << crop_h << " x " << crop_w << endl;
+        image(Rect(crop_x, crop_y, crop_w, crop_h)).copyTo(out_image(Rect(x_offset, y_offset, crop_w, crop_h)));
     }
+    else if(y_offset < 0) {
+        int crop_h = h + y_offset;
+        int crop_w = w - x_offset;
+        int crop_x = abs(x_offset);
+        int crop_y = abs(y_offset);
 
+        cout << "shift image up in y\t" << y_offset << '\t' << crop_h << " x " << crop_w << endl;
+        image(Rect(crop_x, crop_y, crop_w, crop_h)).copyTo(out_image(Rect(0,0,crop_w, crop_h)));
+    }
+    return out_image;
 }
+
 
 
 //Get mask value of (fx, fy) in mask
