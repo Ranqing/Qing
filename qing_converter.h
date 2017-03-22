@@ -2,6 +2,13 @@
 #define QING_CONVERTER_H
 
 #include "qing_common.h"
+#include "qing_macros.h"
+
+inline float qing_angle_to_pi(float angle) {
+    if(angle > 180) angle = -(2*180 - angle);
+    float pi_val = (angle * QING_PI) / 180;
+    return pi_val;
+}
 
 //inline void qing_point2f_to_mat(const vector<Point2f>& points, Mat& matrix)
 //{

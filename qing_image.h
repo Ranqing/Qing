@@ -76,6 +76,56 @@ inline bool qing_load_image(const string& imgname, const int mode, Mat& img) {
     return true;
 }
 
+//load image from std::stream
+inline bool qing_load_image(std::istream& in, const int mode, Mat& img) {
+
+    std::vector<char> data;
+    in >> std::noskipws;
+    std::copy(std::istream_iterator<char>(in), std::istream_iterator<char>(), std::back_inserter(data));
+
+    img = imdecode(Mat(data), mode);
+    if(0!=img.data)
+        return true;
+    else
+        return false;
+}
+
+//inline void qing_save_image(std::ostream& out, const int M, const int N, const int Q) {
+//    unsigned char *image = (unsigned char *) new unsigned char [M*N];
+//    for(i=0; i<N; i++)
+//        for(j=0; j<M; j++)
+//            image[i*M+j]=(unsigned char)fimage[i][j];
+
+//    //    out.open(fname, ios::out);
+//    //    if (!ofp) {
+//    //      cout << "Can't open file: " << fname << endl;
+//    //      exit(1);
+//    //     }
+
+//    //pgm
+//    out << "P5" << endl;
+//    out << M << " " << N << endl;
+//    out << Q << endl;
+//    out.write( reinterpret_cast<char *>(image), (M*N)*sizeof(unsigned char));
+
+//    if (out.fail()) {
+//        cout << "Can't write image " << fname << endl;
+//        exit(0);
+//    }
+//    out.close();
+//}
+
+//example: ".jpg"
+inline void qing_save_image(const string suffix, const Mat& img, vector<unsigned char>& buff, vector<int> param = vector<int>() ) {
+    //
+    //          vector<uchar> buff;//buffer for coding
+    //          vector<int> param = vector<int>(2);
+    //          param[0]=CV_IMWRITE_JPEG_QUALITY;
+    //          param[1]=95;//default(95) 0-100
+
+    imencode(suffix,img,buff,param);
+    cout<<"coded file size(jpg)"<<buff.size()<<endl;//fit buff size automatically.
+}
 
 
 //opencv depth enum { CV_8U=0, CV_8S=1, CV_16U=2, CV_16S=3, CV_32S=4, CV_32F=5, CV_64F=6 };
