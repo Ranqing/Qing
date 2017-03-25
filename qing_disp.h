@@ -47,4 +47,42 @@ inline float qing_disp_2_depth(vector<Vec3f>& points, vector<Vec3f>& colors,  fl
 
 }
 
+//calculate coefficients in [d = ax + by + 1] of a slanted plane, from correspondence input
+void qing_get_slanted_disparity_w(vector<Point2f>& corners_0, vector<Point2f>& corners_1, float * w ) {
+    int size = corners_0.size();
+    vector<float> disps(size, 0);
+    for(int i = 0; i < size; ++i) {
+        disps[i] = corners_0[i].x - corners_1[i].x;
+    }
+
+    Mat pts_mat, h_pts_mat, dsp_mat;
+
+    pts_mat = Mat(corners_0).reshape(1);
+    h_pts_mat = Mat(size, 3, CV_32FC1, Scalar(1));   pts_mat.copyTo(h_pts_mat(Rect(0, 0, 2, size)));
+
+
+    dsp_mat = Mat(disps).reshape(1);
+    cout << pts_mat.size().width   << '\t' << pts_mat.size().height  << '\t' << pts_mat.type() << endl;     //cout << pts_mat << endl;
+    cout << h_pts_mat.size().width << '\t' << h_pts_mat.size().height << '\t' << h_pts_mat.type() << endl;  //cout << h_pts_mat << endl;
+    cout << dsp_mat.size().width << '\t' << dsp_mat.size().height  << '\t' << dsp_mat.type() << endl;        //cout << dsp_mat << endl;
+
+    Mat a_mat = h_pts_mat.t() * h_pts_mat;
+    Mat b_mat = h_pts_mat.t() * dsp_mat;
+    Mat w_mat = Mat(3, 1, CV_32FC1);
+    cout << "a_mat: " << a_mat.size() << endl;
+    cout << "b_mat: " << b_mat.size() << endl;
+    cv::solve(a_mat, b_mat, w_mat, DECOMP_LU);             //singular
+    cout << "solve_lu: " << w_mat.t() << endl;
+//    cv::solve(a_mat, b_mat, w_mat, DECOMP_NORMAL);       //
+//    cout << "solve_normal: " << w_mat << endl;
+
+    memcpy(w, w_mat.ptr<float>(0), sizeof(float)*3);
+
+}
+
+float qing_get_interpolate_disp_value(int x, int y, float * w) {
+    return w[0] * x + w[1] * y + w[2];
+}
+
+
 #endif // QING_DISP_H

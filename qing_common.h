@@ -34,16 +34,16 @@
 using namespace std;
 
 //PCL header
-//#include <pcl/io/pcd_io.h>
-//#include <pcl/io/ply_io.h>
-//#include <pcl/io/vtk_io.h>
-//#include <pcl/point_types.h>
-//#include <pcl/filters/voxel_grid.h>
-//#include <pcl/point_types.h>
-//#include <pcl/io/pcd_io.h>
-//#include <pcl/kdtree/kdtree_flann.h>
-//#include <pcl/features/normal_3d.h>
-//#include <pcl/surface/gp3.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/io/ply_io.h>
+#include <pcl/io/vtk_io.h>
+#include <pcl/point_types.h>
+#include <pcl/filters/voxel_grid.h>
+#include <pcl/point_types.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/features/normal_3d.h>
+#include <pcl/surface/gp3.h>
 
 //OpenCV header
 #include <opencv2/core/core.hpp>
