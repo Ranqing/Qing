@@ -106,12 +106,13 @@ inline void qing_bf_mcost_aggregation(float * filtered_mcost_vol, float * mcost_
     }
 }
 
-//mcost_vol: pixel-level matching cost
+//mcost_vol: raw matching cost
 //filtered_mcost_vol: filtering matching cost
 //len: num of directions
 //directional aggregate mcost volume with approximated bilateral filter guided by gray image
 //bf: bilateral filter
-inline void qing_directional_bf_mcost_aggregation(float * filtered_mcost_vol, float * mcost_vol, float * min_mcost_x, unsigned char * gray, int w, int h, int d_range, int wnd, float * range_table, float * spatial_table, float * directions, int len) {
+inline void qing_directional_bf_mcost_aggregation(float * filtered_mcost_vol, float * mcost_vol, float * min_mcost_x, unsigned char * gray,
+                                                  int w, int h, int d_range, int wnd, float * range_table, float * spatial_table, float * directions, int len) {
 
     double * weights = new double[wnd];       //for each direciton, the weights can be pre-computed
     double sum, sum_div, x_dir, y_dir;
@@ -340,7 +341,6 @@ inline void qing_directional_aw_mcost_aggregation_l(float * filtered_mcost_vol, 
    string file = "../disp_in_x.png";
    imwrite(file, x_disp_mat); cout << "saving " << file << endl;
 # endif
-
 
     //y-direction filtering
     cout << "vertical filtering start..." << endl;

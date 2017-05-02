@@ -40,8 +40,8 @@ inline float * qing_get_spatial_weighted_table(float sigma_spatial, int len) {
     return table_spatial;
 }
 
+//the max direction param = 1, because of the smoothness
 inline float * qing_get_directions(float step, int len) {
-
     float * table_direction, * direction_table_x;
     table_direction = new float[len];
     direction_table_x = &table_direction[0];
@@ -50,6 +50,11 @@ inline float * qing_get_directions(float step, int len) {
     for(int i = -offset; i <= offset; ++i) {
         *direction_table_x++ =  i * step;
     }
+# if 1
+    for(int ii = 0; ii < len; ++ii)
+        cout << table_direction[ii] << ' ';
+    cout << endl;
+# endif
     return table_direction;
 }
 
