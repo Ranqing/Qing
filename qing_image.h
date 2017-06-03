@@ -1,5 +1,6 @@
 #pragma once
 #include "qing_common.h"
+#include "qing_macros.h"
 
 template<typename T>
 inline void qing_img_2_vec(const Mat& img, vector<T>& pixels) {
@@ -49,8 +50,8 @@ inline bool qing_float_vec_2_uchar_img(const vector<float>& pixels, const int sc
 
 inline bool qing_threshold_msk(Mat& src_msk, Mat& dst_msk, const int thresh, const int maxval  ) {
     Mat res_msk = src_msk.clone();
-    uchar * ptr_src = (uchar *)src_msk.ptr<uchar *>(0);
-    uchar * ptr_res = (uchar *)res_msk.ptr<uchar *>(0);
+    uchar * ptr_src = (uchar *)src_msk.ptr<uchar>(0);
+    uchar * ptr_res = (uchar *)res_msk.ptr<uchar>(0);
     int total = src_msk.size().height * src_msk.size().width;
     for(int i = 0; i < total; ++i) {
         if(ptr_src[i] > (uchar)thresh) ptr_res[i] = (uchar)maxval;
@@ -225,7 +226,38 @@ inline Mat qing_shift_image(Mat& image, int y_offset, int x_offset = 0) {
     return out_image;
 }
 
+//x_offset > 0 right;
+//x_offset < 0 left;
+//template<typename T>
+inline void qing_shift_image_x(Mat& shifted, Mat& image, int x_offset, int border_type) {
+    shifted = Mat::zeros(image.size(), image.type());
+    int h = image.size().height;
+    int w = image.size().width;
+    int abs_x_offset = abs(x_offset);
 
+    if(x_offset > 0) {
+        image(Rect(0,0,w-abs_x_offset,h)).copyTo(shifted(Rect(abs_x_offset,0,w-abs_x_offset,h)));
+        switch(border_type) {
+        case QING_DUPLICATE_BORDER: {
+            for(int x = 0; x < abs_x_offset; ++x)
+                image.col(0).copyTo(shifted.col(x));
+            break;
+        }
+        default: break;
+        }
+    }
+    else {
+        image(Rect(abs_x_offset, 0, w-abs_x_offset, h)).copyTo(shifted(Rect(0,0,w-abs_x_offset, h)));
+        switch(border_type) {
+        case QING_DUPLICATE_BORDER: {
+            for(int x = w-abs_x_offset; x < w; ++x)
+                image.col(w-1).copyTo(shifted.col(x));
+            break;
+        }
+        default: break;
+        }
+    }
+}
 
 //Get mask value of (fx, fy) in mask
 //DEPTH: depth of mask

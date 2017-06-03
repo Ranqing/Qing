@@ -6,8 +6,32 @@
 using namespace std;
 
 #include <opencv2/opencv.hpp>
-#include <opencv2/core.hpp>
+#include <opencv2/core/core.hpp>
 using namespace cv;
+
+template<typename T>
+inline void qing_vec_min_pos(int& min_pos, vector<T>& in ) {
+    T min_val = in[0]; min_pos = 0;
+    int len = in.size();
+    for(int i = 1; i<len; ++i) { if(in[i]<min_val) {
+            min_val = in[i];
+            min_pos = i;
+        }
+
+    }
+}
+
+inline void qing_depth_best_cost(vector<float>& disp, vector<vector<vector<float> > > mcost, const int h, const int w, const int nr_planes ){
+    for(int y = 0; y < h; ++y) {
+        for(int x = 0; x < w; ++x) {
+            int d;
+           // qx_vec_min_pos(d, mcost[y][x], nr_planes);
+            qing_vec_min_pos(d, mcost[y][x]);
+            disp[y*w+x] = d;
+        }
+    }
+}
+
 
 //离散级数到视差值的换算, d(k) = (dmin*(1-k) + dmax*(k)) / (dmax-dmin)
 inline float qing_k_2_disp(const int maxd, const int mind, const int k) {
@@ -48,7 +72,7 @@ inline float qing_disp_2_depth(vector<Vec3f>& points, vector<Vec3f>& colors,  fl
 }
 
 //calculate coefficients in [d = ax + by + 1] of a slanted plane, from correspondence input
-void qing_get_slanted_disparity_w(vector<Point2f>& corners_0, vector<Point2f>& corners_1, float * w ) {
+inline void qing_get_slanted_disparity_w(vector<Point2f>& corners_0, vector<Point2f>& corners_1, float * w ) {
     int size = corners_0.size();
     vector<float> disps(size, 0);
     for(int i = 0; i < size; ++i) {
@@ -80,7 +104,7 @@ void qing_get_slanted_disparity_w(vector<Point2f>& corners_0, vector<Point2f>& c
 
 }
 
-float qing_get_interpolate_disp_value(int x, int y, float * w) {
+inline float qing_get_interpolate_disp_value(int x, int y, float * w) {
     return w[0] * x + w[1] * y + w[2];
 }
 

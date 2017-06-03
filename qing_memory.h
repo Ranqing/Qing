@@ -1,7 +1,12 @@
 #ifndef QING_MEMORY_H
 #define QING_MEMORY_H
 
+#include "qx_memory.h"
+
 #include <iostream>
+#include <memory>
+#include <vector>
+using namespace std;
 
 template <typename T>
 T *  qing_new_1d_array(T * ptr, int size) {  ptr = new T[size];  return ptr; }
@@ -51,6 +56,16 @@ T *** qing_clear_3d_array(T *** ptr, int size1, int size2, int size3) {
     }
     ptr = NULL;
     return ptr;
+}
+
+inline void qing_allocf_3(vector<vector<vector<float> > >& array, int n, int r, int c) {
+    array.resize(n, vector<vector<float>>(0));
+    for(int i = 0; i < n; ++i) {
+        array[i].resize(r, vector<float>(0));
+        for(int j = 0; j < r; ++j) {
+            array[i][j].resize(c, 0.f);}
+    }
+  //  cout << array.size() << " x " << array[n-1].size() << " x " << array[n-1][r-1].size() << endl;
 }
 
 #endif // QING_MEMORY_H
