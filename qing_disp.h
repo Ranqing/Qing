@@ -32,7 +32,6 @@ inline void qing_depth_best_cost(vector<float>& disp, vector<vector<vector<float
     }
 }
 
-
 //离散级数到视差值的换算, d(k) = (dmin*(1-k) + dmax*(k)) / (dmax-dmin)
 inline float qing_k_2_disp(const int maxd, const int mind, const int k) {
     return (((mind)*(1-(k)) + (maxd)*(k))/((maxd)- (mind)));

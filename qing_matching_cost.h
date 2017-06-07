@@ -77,6 +77,7 @@ inline void qing_compute_ncc_vecs(float *** ncc_vecs, const vector<float>& view_
 inline float qing_ncc_value(const vector<float>& ncc_vec_l, const vector<float>& ncc_vec_r) {
     if(0==ncc_vec_l.size() || 0==ncc_vec_r.size() || ncc_vec_l.size() != ncc_vec_r.size() ) return 0.f;
     double fenzi = 0.0, fenmu1 = 0.0, fenmu2 = 0.0, fenmu = 0.0;
+
     for(int i = 0; i < ncc_vec_l.size(); ++i) {
         fenzi += ncc_vec_l[i] * ncc_vec_r[i];
         fenmu1 += ncc_vec_l[i] * ncc_vec_l[i];

@@ -151,6 +151,24 @@ inline Mat qing_erode_image(const Mat& image, const int wsize ) {
     return result;
 }
 
+//substract image
+inline void qing_subtract_image(Mat& sub_mat, Mat& mat_1, Mat& mat_2) {
+    if(mat_1.size() != mat_2.size()) {
+        cerr << "different size.." << endl;
+        return;
+    }
+
+    sub_mat = Mat::zeros(mat_1.size(), mat_1.type());
+    unsigned char * ptr_sub = sub_mat.ptr<unsigned char>(0);
+    unsigned char * ptr_1 = mat_1.ptr<unsigned char>(0);
+    unsigned char * ptr_2 = mat_2.ptr<unsigned char>(0);
+    int total_size = mat_1.size().width * mat_1.size().height * mat_1.channels();
+
+    for(int i = 0; i < total_size; ++i) {
+        ptr_sub[i] = abs(ptr_1[i] - ptr_2[i]);
+    }
+}
+
 //shift image
 //x' = x + x_offset
 //y' = y + y_offset
