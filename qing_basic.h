@@ -46,6 +46,55 @@ void qing_max_min_vec(vector<T>& vec, T& maxval, T& minval, int* maxpos = 0, int
     }
 }
 
+template<typename T>
+inline void qing_vec_min_pos(int& min_pos, const vector<T>& in ) {
+    T min_val = in[0]; min_pos = 0;
+    int len = in.size();
+    for(int i = 1; i<len; ++i) { if(in[i]<min_val) {
+            min_val = in[i];
+            min_pos = i;
+        }
+    }
+}
+
+template<typename T>
+inline void qing_vec_max_pos(int& max_pos, const vector<T>& in ) {
+    T max_val = in[0]; max_pos = 0;
+    int len = in.size();
+    for(int i = 1; i < len; ++i) {
+        if(in[i] > max_val) {
+            max_val = in[i];
+            max_pos = i;
+        }
+    }
+}
+
+template<typename T>
+inline void qing_vec_max_val(T& max_val, const vector<T>& in ) {
+    max_val = in[0];
+    int len = in.size();
+    for(int i = 1; i < len; ++i) {
+        if (in[i] > max_val) {
+            max_val = in[i];
+        }
+    }
+}
+
+
+template<typename T>
+inline void qing_vec_normalize(vector<T>& in, T maxval = (T)0) {
+    int len = in.size();
+    vector<T> temp(len);
+    copy(in.begin(),in.end(), temp.begin());
+
+    if(maxval == 0) {
+        qing_vec_max_val<float>(maxval, temp);
+    }
+    for(int i = 0; i < len; ++i) {
+        in[i] = min( temp[i] * 1. / maxval, 1.);
+    }
+}
+
 
 
 #endif // QING_BASIC_H

@@ -1,6 +1,13 @@
 #pragma once
 #include "qing_common.h"
+#include "qing_basic.h"
 #include "qing_macros.h"
+
+//template <typename T>
+//void qing_gray_to_bgr(T gray, unsigned char * bgr) {
+//
+//
+//}
 
 template<typename T>
 inline void qing_img_2_vec(const Mat& img, vector<T>& pixels) {
@@ -275,6 +282,75 @@ inline void qing_shift_image_x(Mat& shifted, Mat& image, int x_offset, int borde
         default: break;
         }
     }
+}
+
+template<typename T>
+inline void qing_map_jet(T v, T vmin, T vmax, unsigned char& r, unsigned char& g, unsigned char& b)
+{
+        r = 255;
+        g = 255;
+        b = 255;
+
+        if (v < vmin) {
+            v = vmin;
+        }
+
+        if (v > vmax) {
+            v = vmax;
+        }
+
+        double dr, dg, db;
+
+        if (v < 0.1242) {
+            db = 0.504 + ((1.-0.504) / 0.1242)*v;
+            dg = dr = 0.;
+        } else if (v < 0.3747) {
+            db = 1.;
+            dr = 0.;
+            dg = (v - 0.1242) * (1. / (0.3747-0.1242));
+        } else if (v < 0.6253) {
+            db = (0.6253 - v) * (1. / (0.6253-0.3747));
+            dg = 1.;
+            dr = (v - 0.3747) * (1. / (0.6253-0.3747));
+        } else if (v < 0.8758) {
+            db = 0.;
+            dr = 1.;
+            dg = (0.8758 - v) * (1. / (0.8758-0.6253));
+        } else {
+            db = 0.;
+            dg = 0.;
+            dr = 1. - (v - 0.8758) * ((1.-0.504) / (1.-0.8758));
+        }
+
+        r = (unsigned char) (255 * dr);
+        g = (unsigned char) (255 * dg);
+        b = (unsigned char) (255 * db);
+}
+
+//src: input img
+//dst: result img that applying color jet map on input img
+//noval: pixels of which values equal noval will be omited
+inline void qing_apply_colormap_jet(Mat& out, vector<float>& src, int len, float maxval, float noval) {
+    vector<float> t_src(len);
+    copy(src.begin(), src.end(), t_src.begin());
+    qing_vec_normalize<float>(t_src, maxval);
+
+    int h = out.size().height;
+    int w = out.size().width;
+    out = Mat::zeros(out.size(), CV_8UC3);
+    unsigned char * ptr_out = out.ptr<unsigned char>(0), b, g, r;
+
+    for(int i = 0; i < len; ++i) {
+        if(noval == t_src[i]) continue;
+        qing_map_jet<float>(t_src[i], 0.f, 1.f, r, g, b);
+        ptr_out[i*3+0] = b;
+        ptr_out[i*3+1] = g;
+        ptr_out[i*3+2] = r;
+    }
+
+//    imshow("colormap_jet", out);
+//    waitKey(0);
+//    destroyWindow("colormap_jet");
 }
 
 //Get mask value of (fx, fy) in mask

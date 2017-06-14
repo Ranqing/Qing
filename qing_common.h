@@ -44,7 +44,7 @@ using namespace std;
 //#include <pcl/kdtree/kdtree_flann.h>
 //#include <pcl/features/normal_3d.h>
 //#include <pcl/surface/gp3.h>
-
+//
 //#include <pcl/common/transforms.h>
 //#include <pcl/common/pca.h>
 //#include <pcl/filters/crop_box.h>
@@ -69,6 +69,8 @@ using namespace std;
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/features2d/features2d.hpp>
+#include <opencv2/imgcodecs/imgcodecs.hpp>
+#include <opencv2/videoio/videoio.hpp>
 //#include<opencv2/nonfree/nonfree.hpp>
 //#include<opencv2/legacy/legacy.hpp>
 using namespace cv;

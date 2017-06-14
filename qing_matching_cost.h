@@ -52,30 +52,51 @@ inline unsigned char qing_get_mcost_tad(unsigned char * color_0, unsigned char *
     return (unsigned char)min((int)delta, QING_TAD_TRUNCATED);
 }
 
-//NCC vectors
-inline void qing_compute_ncc_vecs(float *** ncc_vecs, const vector<float>& view_sub_mean, const int& h, const int& w, const int& wnd_size) {
-    int offset = int(wnd_size * 0.5f);
-    int wndsz2 = wnd_size * wnd_size;
-    int iy, ix, iidx;
-    for(int y = 0; y < h; ++y) {
-        for(int x = 0; x < w; ++x) {
-            memset(ncc_vecs[y][x], 0, sizeof(float)*wndsz2);
-            for(int j = -offset; j <= offset; ++j) {
-                iy = y + j;   if(iy < 0 || iy > h) continue;
-                for(int i = -offset; i <= offset; ++i) {
-                    ix = x + i;  if(ix < 0 || ix > w) continue;
+inline void qing_compute_ncc_vecs(vector<vector<vector<float> > >& ncc_vecs, const vector<float>& view, const vector<float>& mean, const vector<uchar>& mask, const int& h, const int& w, const int& wnd_size) {
+    cout << ncc_vecs.size() << " x " << ncc_vecs[0].size() << " x " << ncc_vecs[0][0].size() << endl;
 
-                    iidx = (j+offset) * wnd_size + (i+offset);
-                    ncc_vecs[y][x][iidx] = view_sub_mean[iy*w+ix];
+    int offset = (int)(wnd_size * 0.5f), idx = -1, iidx = -1;
+    int ix, iy;
+    for(int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
+            fill_n(ncc_vecs[y][x].begin(), ncc_vecs[y][x].size(), 0.f);    //compute ncc vecs for (y,x)
+            if (255 != mask[++idx]) continue;
+
+            for (int j = -offset; j <= offset; ++j) {
+                iy = y + j;
+                if (0 > iy || h <= iy) continue;
+                for (int i = -offset; i <= offset; ++i) {
+                    ix = x + i;
+                    if (0 > ix || w <= ix) continue;
+                    iidx = iy * w + ix;
+                    if (255 != mask[iidx]) continue;
+                    ncc_vecs[y][x][(j + offset) * wnd_size + (i + offset)] = view[iidx] - mean[idx];
                 }
             }
         }
     }
+
+# if 0
+    string filename = "ncc-vector.txt";
+    fstream fout(filename.c_str(), ios::out);
+    for(int y = 0; y < h; ++y) {
+        for(int x = 0; x < w; ++x) {
+            fout << y << ' ' << x << '\t' ;
+            for(int k = 0; k < ncc_vecs[y][x].size(); ++k) {
+                fout << ncc_vecs[y][x][k] << ' ';
+            }
+            fout << endl;
+        }
+    }
+# endif
 }
 
 //NCC
 inline float qing_ncc_value(const vector<float>& ncc_vec_l, const vector<float>& ncc_vec_r) {
-    if(0==ncc_vec_l.size() || 0==ncc_vec_r.size() || ncc_vec_l.size() != ncc_vec_r.size() ) return 0.f;
+    if(0==ncc_vec_l.size() || 0==ncc_vec_r.size() || ncc_vec_l.size() != ncc_vec_r.size() ) {
+        cerr << "size is zero or different size.. " << endl;
+        return 0.f;
+    }
     double fenzi = 0.0, fenmu1 = 0.0, fenmu2 = 0.0, fenmu = 0.0;
 
     for(int i = 0; i < ncc_vec_l.size(); ++i) {
@@ -85,7 +106,7 @@ inline float qing_ncc_value(const vector<float>& ncc_vec_l, const vector<float>&
     }
 
     fenmu = sqrt(fenmu1) * sqrt(fenmu2);
-    if(fenmu == 0.0) return 0.1;
+    if(fenmu == 0.0) return 0.0;
     else
         return fenzi/fenmu;
 }
@@ -163,7 +184,9 @@ inline Mat qing_save_mcost_jpg(const string filename, float * mcost, int w, int 
 
     double min_val, max_val;
     cv::minMaxIdx(mcost_mat, &min_val, &max_val);
-    double scale = min(1/min_val, 255/max_val);
+
+    double scale = min(255/max_val, 200.);
+
     Mat vis_mcost_mat(h, w, CV_8UC1);
     mcost_mat.convertTo(vis_mcost_mat, CV_8UC1, scale);
     imwrite(filename, vis_mcost_mat);
