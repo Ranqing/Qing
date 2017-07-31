@@ -11,24 +11,28 @@ using namespace cv;
 
 #include "qing_basic.h"
 
-inline void qing_depth_min_cost(vector<float>& disp, const vector<vector<vector<float> > >& mcost, const int h, const int w, const int nr_planes ){
+inline void qing_depth_min_cost(vector<float>& disp, const vector<vector<vector<float> > >& mcost, const vector<unsigned char>& mask, const int h, const int w, const int nr_planes ){
+    int idx = -1, d;
     for(int y = 0; y < h; ++y) {
         for(int x = 0; x < w; ++x) {
-            int d;
-           // qx_vec_min_pos(d, mcost[y][x], nr_planes);
-            qing_vec_min_pos(d, mcost[y][x]);
-            disp[y*w+x] = d;
+           if(mask.size() && mask[++idx]) {
+               // qx_vec_min_pos(d, mcost[y][x], nr_planes);
+               qing_vec_min_pos(d, mcost[y][x]);
+               disp[y*w+x] = d;
+           }
         }
     }
 }
 
-inline void qing_depth_max_cost(vector<float>& disp, const vector<vector<vector<float> > >& mcost, const int h, const int w, const int nr_planes ){
+inline void qing_depth_max_cost(vector<float>& disp, const vector<vector<vector<float> > >& mcost, const vector<unsigned char>& mask, const int h, const int w, const int nr_planes ){
+    int idx = -1,d;
     for(int y = 0; y < h; ++y) {
         for(int x = 0; x < w; ++x) {
-            int d;
-            // qx_vec_min_pos(d, mcost[y][x], nr_planes);
-            qing_vec_max_pos(d, mcost[y][x]);
-            disp[y*w+x] = d;
+            if(mask.size() && mask[++idx]) {
+                // qx_vec_min_pos(d, mcost[y][x], nr_planes);
+                qing_vec_max_pos(d, mcost[y][x]);
+                disp[y*w+x] = d;
+            }
         }
     }
 }
@@ -66,7 +70,7 @@ inline float qing_disp_2_depth(vector<Vec3f>& points, vector<Vec3f>& colors,  fl
             }
         }
     }
-    cout << points.size() << " points are generated... " << endl;
+ //   cout << points.size() << " points are generated... " << endl;
 
 }
 

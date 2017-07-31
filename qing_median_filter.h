@@ -48,7 +48,7 @@ inline void qing_median_filter(vector<int>& out, const vector<int>& in, const ve
         }
     }
 
-    cout << "\tqing_median_filter done..." << endl;
+ //   cout << "\tqing_median_filter done..." << endl;
 }
 
 #endif // QING_MEDIAN_FILTER_H

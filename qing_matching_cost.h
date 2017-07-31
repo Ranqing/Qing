@@ -9,6 +9,11 @@
 #define QING_MAX_MCOST          10000.f
 #define QING_MIN_MCOST          -QING_MAX_MCOST
 
+//enumerate variables in matching cost
+//enum CCType{zncc = 1, cen, tad} ;           //CG: CEN + GRD; ZC: ZNCC + CEN;
+//enum CAType{box = 1, gf, bf} ;              //Guidian, Biletaral, Non-linear, Segment-Tree
+//enum PPType{wm = 1, sg, np};                //Weight-Median Filter
+
 //single pixel matching cost
 inline void qing_stereo_flip_cost_vol(vector<vector<vector<float> > >&  hwd_costvol_r, const vector<vector<vector<float> > >&  hwd_costvol_l, int h, int w, int nr_plane) {
     for(int y = 0; y < h; ++y) {
@@ -53,7 +58,6 @@ inline unsigned char qing_get_mcost_tad(unsigned char * color_0, unsigned char *
 }
 
 inline void qing_compute_ncc_vecs(vector<vector<vector<float> > >& ncc_vecs, const vector<float>& view, const vector<float>& mean, const vector<uchar>& mask, const int& h, const int& w, const int& wnd_size) {
-    cout << ncc_vecs.size() << " x " << ncc_vecs[0].size() << " x " << ncc_vecs[0][0].size() << endl;
 
     int offset = (int)(wnd_size * 0.5f), idx = -1, iidx = -1;
     int ix, iy;
@@ -89,6 +93,25 @@ inline void qing_compute_ncc_vecs(vector<vector<vector<float> > >& ncc_vecs, con
         }
     }
 # endif
+}
+
+
+inline void qing_get_ncc_vec(float * ncc_vec, const int y, const int x, const vector<float>& view, const vector<float>& mean, const int h, const int w, const int ch, const int wnd_sz) {
+    int idx = y * w + x;
+    int wnd_sz_2 = wnd_sz * wnd_sz;
+    memset(ncc_vec, 0.f, sizeof(float)*wnd_sz_2);
+
+    int offset = (int)(wnd_sz * 0.5f), iy, ix, iidx;
+    for(int j = -offset; j <= offset; ++j) {
+        iy = y + j;
+        if(0 > iy || h <= iy) continue;
+        for(int i = -offset; i <= offset; ++i) {
+            ix = x + i;
+            if(0 > ix || w <= ix) continue;
+            iidx = iy * w + ix;
+            ncc_vec[(j+offset)*wnd_sz + (i+offset)] = view[iidx] - mean[idx];
+        }
+    }
 }
 
 //NCC

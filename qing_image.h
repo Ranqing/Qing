@@ -44,7 +44,7 @@ inline Mat qing_uchar_array_2_image(unsigned char * colors, const int h, const i
     return image;
 }
 
-inline bool qing_float_vec_2_uchar_img(const vector<float>& pixels, const int scale, Mat& img) {
+inline bool qing_float_vec_2_uchar_img(const vector<float>& pixels, const float scale, Mat& img) {
     if(NULL == img.data) {
         cerr << "invalid memory of img...alloc memory first.." << endl;
         return false;

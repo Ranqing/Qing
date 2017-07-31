@@ -58,7 +58,7 @@ inline float * qing_get_directions(float step, int len) {
     return table_direction;
 }
 
-inline void  qing_approximated_gray_bilateral_filter(float * out, float * in, unsigned char * gray, const int w, const int h, const int wnd, float * range_table, float * spatial_table) {
+inline void qing_approximated_gray_bilateral_filter(float * out, float * in, unsigned char * gray, const int w, const int h, const int wnd, float * range_table, float * spatial_table) {
 
     int image_size = h * w;
     int offset = wnd * 0.5;
@@ -270,8 +270,9 @@ inline void qing_bilateral_filter(float * out, float * in, unsigned char * bgr, 
     }
 }
 
+template <typename T>
 //brute force of bilateral_filter_one_channel, by vector
-inline void qing_bilateral_filter_1ch(const vector<float>& img, const vector<uchar>& msk, const int w, const int h, vector<float>& cost_vol,
+inline void qing_bilateral_filter_1ch(const vector<T>& img, const vector<uchar>& msk, const int w, const int h, vector<float>& cost_vol,
                                       const int wnd = 9,  double sigma_spatial = 4.5, double sigma_range = 0.03 ) {
     sigma_spatial = wnd * 0.5;
     int offset = (int)(sigma_range);

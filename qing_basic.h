@@ -2,6 +2,7 @@
 #define QING_BASIC_H
 
 #include "qing_common.h"
+#include "qing_macros.h"
 
 template<typename T>
 //qing_subtract_mat(view_sub_mean_l, m_mat_gray_l, m_mat_mean_l);
@@ -59,7 +60,8 @@ inline void qing_vec_min_pos(int& min_pos, const vector<T>& in ) {
 
 template<typename T>
 inline void qing_vec_max_pos(int& max_pos, const vector<T>& in ) {
-    T max_val = in[0]; max_pos = 0;
+    T max_val = in[0];
+    max_pos = 0;
     int len = in.size();
     for(int i = 1; i < len; ++i) {
         if(in[i] > max_val) {
@@ -80,6 +82,17 @@ inline void qing_vec_max_val(T& max_val, const vector<T>& in ) {
     }
 }
 
+template<typename T>
+inline void qing_vec_max_pos(int& max_pos, const vector<T>& in, const int& st_pos, const int& ed_pos) {
+    T max_val = in[st_pos];
+    max_pos = st_pos;
+    for(int i = st_pos + 1; i <= ed_pos; ++i) {
+        if (in[i] > max_val) {
+            max_val = in[i];
+            max_pos = i;
+        }
+    }
+}
 
 template<typename T>
 inline void qing_vec_normalize(vector<T>& in, T maxval = (T)0) {
