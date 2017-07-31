@@ -3,12 +3,22 @@
 
 #include "qing_common.h"
 
+#ifdef linux
 inline void qing_create_dir(const string& path)
 {
     if(NULL==opendir(path.c_str()))
         mkdir(path.c_str(),  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 }
+#else 
+inline void qing_create_dir(const string& path)
+{
+   /*if(NULL==opendir(path.c_str()))
+        mkdir(path.c_str(),  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);*/
+    _mkdir(path.c_str());
+}
+#endif
 
+#ifdef linux
 inline void qing_get_all_files(const string& basePath, vector<string>& files)
 {
     DIR * dir;
@@ -44,7 +54,29 @@ inline void qing_get_all_files(const string& basePath, vector<string>& files)
             qing_get_all_files(string(base), files);
         }
     }
+
 }
+#endif
+#ifdef WIN32
+inline void qing_get_all_files(const string& basePath, vector<string>& files)
+{
+	_finddata_t file;  
+    long lf;  
+    //输入文件夹路径  
+    if ((lf=_findfirst(basePath.c_str(), &file)) == -1) {  
+        cout<<basePath<<" not found!!!"<<endl;  
+    } else {  
+	    while(_findnext(lf, &file) == 0) {  
+            //输出文件名  
+            cout<<file.name<<endl;  
+            if (strcmp(file.name, ".") == 0 || strcmp(file.name, "..") == 0)  
+                continue;  
+            files.push_back(file.name);  
+        }  
+    }  
+    _findclose(lf); 
+}
+#endif
 
 inline void qing_cwd()
 {

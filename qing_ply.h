@@ -27,9 +27,9 @@ inline void writePLY(const string fn, const int wid, const int hei, const int va
 
     if ( flag & PT_HAS_COLOR )
     {
-        fprintf( file, "property uchar diffuse_red\n");
-        fprintf( file, "property uchar diffuse_green\n");
-        fprintf( file, "property uchar diffuse_blue\n");
+        fprintf( file, "property uchar red\n");
+        fprintf( file, "property uchar green\n");
+        fprintf( file, "property uchar blue\n");
     }
     if ( flag & PT_HAS_NORMAL )
     {

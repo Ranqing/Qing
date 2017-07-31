@@ -17,7 +17,7 @@ using namespace cv;
 //total_size: length of data
 //step_size:  length of output '\n'
 inline void qing_write_txt(const string filename, const float* data, const int total_size, const int step_size = 0) {
-    ofstream fout(filename, ios_base::out) ;
+    ofstream fout(filename.c_str(), ios_base::out) ;
     if(false == fout.is_open()) {
         cerr << "failed to open " << filename << endl;
         return ;

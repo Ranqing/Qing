@@ -2,12 +2,18 @@
 #define QING_COMMON_H
 
 //unix related
+#ifdef linux
 #include <unistd.h>
 #include <dirent.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#endif
+#ifdef WIN32
+#include <direct.h>
+#include <io.h>
+#endif
 
 //c header
 #include <math.h>
@@ -44,7 +50,7 @@ using namespace std;
 //#include <pcl/kdtree/kdtree_flann.h>
 //#include <pcl/features/normal_3d.h>
 //#include <pcl/surface/gp3.h>
-//
+
 //#include <pcl/common/transforms.h>
 //#include <pcl/common/pca.h>
 //#include <pcl/filters/crop_box.h>
@@ -55,7 +61,6 @@ using namespace std;
 //#include <pcl/sample_consensus/model_types.h>
 //#include <pcl/segmentation/sac_segmentation.h>
 //#include <pcl/segmentation/extract_clusters.h>
-//#include <pcl/apps/dominant_plane_segmentation.h>
 //#include <pcl/visualization/image_viewer.h>
 //#include <pcl/features/moment_of_inertia_estimation.h>
 //#include <pcl/features/normal_3d.h>
@@ -69,8 +74,8 @@ using namespace std;
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/features2d/features2d.hpp>
-#include <opencv2/imgcodecs/imgcodecs.hpp>
-#include <opencv2/videoio/videoio.hpp>
+//#include <opencv2/imgcodecs/imgcodecs.hpp>
+//#include <opencv2/videoio/videoio.hpp>
 //#include<opencv2/nonfree/nonfree.hpp>
 //#include<opencv2/legacy/legacy.hpp>
 using namespace cv;
