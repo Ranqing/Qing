@@ -1,8 +1,26 @@
 #ifndef QING_COMMON_H
 #define QING_COMMON_H
 
-//unix related
-#ifdef linux
+////unix related
+//#ifdef linux
+//#include <unistd.h>
+//#include <dirent.h>
+//#include <fcntl.h>
+//#include <sys/types.h>
+//#include <sys/stat.h>
+//#include <sys/mman.h>
+//#endif
+//#ifdef WIN32
+//#include <direct.h>
+//#include <io.h>
+//#endif
+
+
+//win32/win64 related
+#ifdef _WIN32
+#include <direct.h>
+#include <io.h>
+#else
 #include <unistd.h>
 #include <dirent.h>
 #include <fcntl.h>
@@ -10,10 +28,7 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 #endif
-#ifdef WIN32
-#include <direct.h>
-#include <io.h>
-#endif
+
 
 //c header
 #include <math.h>
@@ -84,4 +99,5 @@ using namespace cv;
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Eigen>
 #define DOUBLE_MAX 1e10
+#define QING_PI 3.14159265358979323846
 #endif

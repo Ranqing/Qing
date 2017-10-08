@@ -3,18 +3,33 @@
 
 #include "qing_common.h"
 
-#ifdef linux
+//#ifdef linux
+//inline void qing_create_dir(const string& path)
+//{
+//    if(NULL==opendir(path.c_str()))
+//        mkdir(path.c_str(),  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+//}
+//#else
+//inline void qing_create_dir(const string& path)
+//{
+//   /*if(NULL==opendir(path.c_str()))
+//        mkdir(path.c_str(),  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);*/
+//    _mkdir(path.c_str());
+//}
+//#endif
+
+
+#ifdef _WIN32
+inline void qing_create_dir(const string& path) {
+ /*if(NULL==opendir(path.c_str()))
+        mkdir(path.c_str(),  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);*/
+    _mkdir(path.c_str());
+}
+#else
 inline void qing_create_dir(const string& path)
 {
     if(NULL==opendir(path.c_str()))
         mkdir(path.c_str(),  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-}
-#else 
-inline void qing_create_dir(const string& path)
-{
-   /*if(NULL==opendir(path.c_str()))
-        mkdir(path.c_str(),  S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);*/
-    _mkdir(path.c_str());
 }
 #endif
 
@@ -82,7 +97,7 @@ inline void qing_cwd()
 {
     char cwd[1024];
     getcwd(cwd, 1024);
-    printf("cwd: %s\n", cwd);
+    printf("\t%s\n", cwd);
 }
 
 //int getAllTypeFilesInOneFolder(const string& basePath, const string& fileType, vector<string>& files)

@@ -8,6 +8,10 @@
 #define QING_PI 3.14159265
 #define QING_DEBUG_FLAG_STRING  "COOLCOOLCOOL"
 
+#define PT_UNDEFINED  1.0e38f
+#define PT_HAS_NORMAL 1 << 1
+#define PT_HAS_COLOR  1 << 2
+
 #define QING_DUPLICATE_BORDER 1
 
 #endif // QING_MACROS_H

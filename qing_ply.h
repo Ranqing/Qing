@@ -1,10 +1,7 @@
 #pragma once
 
 #include "qing_common.h"
-
-#define PT_UNDEFINED  1.0e38f
-#define PT_HAS_NORMAL 1 << 1
-#define PT_HAS_COLOR  1 << 2
+#include "qing_macros.h"
 
 inline void writePLY(const string fn, const int wid, const int hei, const int validnum, const int flag,
                      const vector<Point3f>& points, const vector<Vec3b>& colors, const vector<Point3f>& normals = vector<Point3f>() )
