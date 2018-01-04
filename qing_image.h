@@ -70,7 +70,7 @@ inline bool qing_threshold_msk(Mat& src_msk, Mat& dst_msk, const int thresh, con
 inline bool qing_load_image(const string& imgname, const int mode, Mat& img) {
     img = imread(imgname, mode);
     if(NULL == img.data) {
-        cout << "failed to open " << imgname << endl;
+        cerr << "failed to open " << imgname << endl;
         return false;
     }
     if(CV_LOAD_IMAGE_GRAYSCALE == mode)

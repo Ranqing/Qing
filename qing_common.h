@@ -1,7 +1,7 @@
 #ifndef QING_COMMON_H
 #define QING_COMMON_H
 
-////unix related
+//unix related
 //#ifdef linux
 //#include <unistd.h>
 //#include <dirent.h>
@@ -10,16 +10,16 @@
 //#include <sys/stat.h>
 //#include <sys/mman.h>
 //#endif
-//#ifdef WIN32
+//#ifdef _WIN32
 //#include <direct.h>
 //#include <io.h>
 //#endif
-
 
 //win32/win64 related
 #ifdef _WIN32
 #include <direct.h>
 #include <io.h>
+//unix/osx related
 #else
 #include <unistd.h>
 #include <dirent.h>
@@ -28,7 +28,6 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 #endif
-
 
 //c header
 #include <math.h>

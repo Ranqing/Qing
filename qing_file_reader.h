@@ -159,6 +159,24 @@ inline void qing_read_stereo_yml(const string& filename, Mat& R1, Mat& R2, Mat& 
     fs.release();
 }
 
+//stereoFile, R0, R1, P0, P1, Q, imageSize
+inline void qing_read_stereo_yml_p(const string& filename, Mat& P1, Mat& P2 )
+{
+    FileStorage fs(filename, FileStorage::READ);
+    if(false == fs.isOpened())
+    {
+        cerr << "failed to open " << filename << endl;
+        return ;
+    }
+
+
+    fs["P1"] >> P1;
+    fs["P2"] >> P2;
+
+    fs.release();
+}
+
+
 //stereoFile, Q
 inline void qing_read_stereo_yml_qmatrix(const string& filename, Mat& Q)
 {

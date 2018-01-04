@@ -33,7 +33,7 @@ inline void qing_create_dir(const string& path)
 }
 #endif
 
-#ifdef linux
+//#ifdef linux
 inline void qing_get_all_files(const string& basePath, vector<string>& files)
 {
     DIR * dir;
@@ -71,7 +71,7 @@ inline void qing_get_all_files(const string& basePath, vector<string>& files)
     }
 
 }
-#endif
+//#endif
 #ifdef WIN32
 inline void qing_get_all_files(const string& basePath, vector<string>& files)
 {

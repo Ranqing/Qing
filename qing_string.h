@@ -234,14 +234,14 @@ inline string qing_int_2_format_string(const int &num, const int &w, const char 
     return ss.str();
 }
 
-double qing_string_2_double(const string &str) {
+inline double qing_string_2_double(const string &str) {
     stringstream ss(str);
     double num;
     ss >> num;
     return num;
 }
 
-string qing_double_2_string(const double &num) {
+inline string qing_double_2_string(const double &num) {
     stringstream ss;
     ss << num;
     return ss.str();

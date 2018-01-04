@@ -5,10 +5,6 @@
 #include <cmath>
 using namespace std;
 
-#include <opencv2/opencv.hpp>
-#include <opencv2/core/core.hpp>
-using namespace cv;
-
 #include "qing_basic.h"
 
 inline void qing_depth_min_cost(vector<float>& disp, const vector<vector<vector<float> > >& mcost, const vector<unsigned char>& mask, const int h, const int w, const int nr_planes ){
