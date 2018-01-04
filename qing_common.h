@@ -21,12 +21,14 @@
 #include <io.h>
 //unix/osx related
 #else
+
 #include <unistd.h>
 #include <dirent.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+
 #endif
 
 //c header
@@ -51,6 +53,7 @@
 #include <set>
 #include <limits>
 #include <bitset>
+
 using namespace std;
 
 //PCL header
@@ -97,6 +100,7 @@ using namespace cv;
 //Eigen
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Eigen>
+
 #define DOUBLE_MAX 1e10
 #define QING_PI 3.14159265358979323846
 #endif
