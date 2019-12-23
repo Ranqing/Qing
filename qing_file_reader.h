@@ -16,6 +16,8 @@ using namespace std;
 
 using namespace cv;
 
+#include "qing_string.h"
+
 //data's memory should be alloc first
 inline void qing_read_bin_c (const string filename, float *&data, int total_size) {
     FILE *fin_in = fopen(filename.c_str(), "rb");
@@ -194,6 +196,63 @@ inline void qing_read_stereo_yml_rt (const string &filename, Mat &R, Mat &t) {
     fs.release();
 }
 
+//
+//void qing_read_crop_infos(const string filename, vector<Point2i>& cxy, vector<Size>& csz, vector<int>& disp_ranges)
+//{
+////    cout << filename << endl;
+//    fstream fin(filename.c_str(), ios::in);
+//    if(fin.is_open() == false)
+//    {
+//        cerr << "failed to open " << filename << endl;
+//        return ;
+//    }
+//
+//    string s;
+//    vector<string> words(0);
+//    while(getline(fin, s))
+//    {
+//        if(s[0] == '#') continue;
+//        words.clear();
+//        qing_split_a_string_by_space(s, words);
+//
+//        string camName = words[0];
+//        int cx = qing_string_2_int(words[1]);
+//        int cy = qing_string_2_int(words[2]);
+//        int w = qing_string_2_int(words[3]);
+//        int h = qing_string_2_int(words[4]);
+//        int d = qing_string_2_int(words[5]);
+//
+//        cxy.push_back(Point2i(cx, cy));
+//        csz.push_back(Size(w, h));
+//        disp_ranges.push_back(d);
+//    }
+//}
+//
+//void qing_read_rect(const string& filename, vector<cv::Rect>& rects) {
+//    fstream fin(filename.c_str(), ios::in);
+//    if(fin.is_open() == false)
+//    {
+//        cerr << "failed to open " << filename << endl;
+//        return ;
+//    }
+//
+//    string s;
+//    vector<string> words(0);
+//
+//    while(getline(fin, s))
+//    {
+//        if(s[0] == '#') continue;
+//        words.clear();
+//        qing_split_a_string_by_space(s, words);
+//
+//        int cx = qing_string_2_int(words[0]);
+//        int cy = qing_string_2_int(words[1]);
+//        int w = qing_string_2_int(words[2]);
+//        int h = qing_string_2_int(words[3]);
+//
+//        rects.push_back(cv::Rect(cx, cy, w, h));
+//    }
+//}
 
 #endif // QING_FILE_READER
 

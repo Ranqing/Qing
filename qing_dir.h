@@ -3,6 +3,8 @@
 
 #include "qing_common.h"
 
+// using namespace std;
+
 
 #ifdef _WIN32
 inline void qing_create_dir(const string& path) {

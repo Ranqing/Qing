@@ -1,5 +1,5 @@
-#ifndef RQ_STRING_H
-#define RQ_STRING_H
+#ifndef QING_STRING_H
+#define QING_STRING_H
 
 #include <iostream>
 #include <iomanip>
@@ -8,7 +8,10 @@
 #include <sstream>
 #include <fstream>
 
-using namespace std;
+using std::stringstream;
+using std::fstream;
+using std::ofstream;
+using std::ifstream;
 
 //older version
 inline string getSaveFileName(const string &folder, const int n, const string &suffix) {
@@ -189,16 +192,6 @@ inline void qing_write_out_string_list(const string &fileName, vector<string> &s
     fout.close();
 }
 
-//older version
-//inline int string2int(const string& str)
-//{
-//    stringstream ss(str);
-//
-//    int num;
-//    ss >> num;
-//    return num;
-//}
-
 inline int qing_string_2_int(const string &str) {
     stringstream ss(str);
     int num;
@@ -206,27 +199,11 @@ inline int qing_string_2_int(const string &str) {
     return num;
 }
 
-//older version
-//inline string int2string(const int& num)
-//{
-//    stringstream ss;
-//    ss << num;
-//    return ss.str();
-//}
-
 inline string qing_int_2_string(const int &num) {
     stringstream ss;
     ss << num;
     return ss.str();
 }
-
-//older version
-//inline string int2FormatString(const int& num, const int& w, const char ch)
-//{
-//    stringstream ss;
-//    ss << setfill(ch) << setw(w) << num ;
-//    return ss.str();
-//}
 
 inline string qing_int_2_format_string(const int &num, const int &w, const char ch) {
     stringstream ss;
@@ -264,4 +241,13 @@ inline bool qing_check_file_suffix(const string fileName, const string suffix) {
         return true;
 }
 
-#endif // RQ_STRING_H
+inline void qing_split(const std::string& str, char ch, std::vector<std::string>* result) {
+  result->clear();
+  std::stringstream ss(str);
+  std::string segment;
+  while (std::getline(ss, segment, ch)) {
+    result->push_back(segment);
+  }
+}
+
+#endif // QING_STRING_H

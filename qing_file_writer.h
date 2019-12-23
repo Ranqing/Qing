@@ -82,7 +82,8 @@ inline void qing_write_stereo_info (const string &filename, const int stereoidx,
                                     const string &msk0, const string &msk1,
                                     const Point2f pt0, const Point2f pt1,
                                     const Size imageSize,
-                                    const float maxDisp, const float minDisp, const Mat &Qmatrix) {
+                                    const float maxDisp, const float minDisp, const Mat &Qmatrix,
+                                    const Size frmSize) {
     fstream fout(filename.c_str(), ios::out);
     if (fout.is_open() == false) {
         cerr << "failed to open " << filename << endl;
@@ -113,32 +114,42 @@ inline void qing_write_stereo_info (const string &filename, const int stereoidx,
     fout.close();
 #endif
 
+    if (pt0.x + imageSize.width < frmSize.width &&
+        pt0.y + imageSize.height < frmSize.height &&
+        pt1.x + imageSize.width < frmSize.width &&
+        pt1.y + imageSize.height < frmSize.height)
+    {
 #if 1
-    fout << cam0 + cam1 << endl;
-    fout << stereoidx << endl;
-    fout << cam0 << endl;
-    fout << cam1 << endl;
-    fout << frameName << endl;
-    fout << img0 << endl;
-    fout << img1 << endl;
-    fout << msk0 << endl;
-    fout << msk1 << endl;
-    fout << pt0.x << " " << pt0.y << endl;   // left start point
-    fout << pt1.x << " " << pt1.y << endl;   // right start point
-    fout << imageSize.width << " " << imageSize.height << endl;  //image size
-    fout << maxDisp << endl;    //maxdisp
-    fout << minDisp << endl;    //mindisp
+        fout << cam0 + cam1 << endl;
+        fout << stereoidx << endl;
+        fout << cam0 << endl;
+        fout << cam1 << endl;
+        fout << frameName << endl;
+        fout << img0 << endl;
+        fout << img1 << endl;
+        fout << msk0 << endl;
+        fout << msk1 << endl;
+        fout << pt0.x << " " << pt0.y << endl;   // left start point
+        fout << pt1.x << " " << pt1.y << endl;   // right start point
+        fout << imageSize.width << " " << imageSize.height << endl;  //image size
+        fout << maxDisp << endl;    //maxdisp
+        fout << minDisp << endl;    //mindisp
 
-    double *ptr = (double *) Qmatrix.ptr(0);
-    for (int r = 0; r < 4; r++) {
-        for (int c = 0; c < 4; c++) {
-            //fout 格式化输出
-            fout << setprecision(16) << ptr[r * 4 + c] << ' ';
+        double *ptr = (double *) Qmatrix.ptr(0);
+        for (int r = 0; r < 4; r++) {
+            for (int c = 0; c < 4; c++) {
+                //fout 格式化输出
+                fout << setprecision(16) << ptr[r * 4 + c] << ' ';
+            }
+            fout << endl;
         }
-        fout << endl;
-    }
-    fout.close();
+        fout.close();
 #endif
+    }
+    else {
+        std::cout << "incorrect size. " << cam0 << '\t' << cam1 << std::endl;
+        exit(1);
+    }
 }
 
 inline void qing_write_p_matrices (const string filename, const Mat &P1, const Mat &P2) {
